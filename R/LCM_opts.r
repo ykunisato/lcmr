@@ -1,5 +1,5 @@
-############# LCM_opts #############
-LCM_opts <- function() {
+# LCM_opts ===========================================================================
+LCM_opts <- function(opts=opts) {
     # Set options.
     #
     # USAGE: opts = LCM_opts([opts])
@@ -21,7 +21,7 @@ LCM_opts <- function() {
     #   opts.K = 10         (maximum number of latent causes)
     #
     #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(08/2019)
-    
+
     def_opts   <- list()
     def_opts$M <- 100
     def_opts$a <- 1
@@ -29,30 +29,23 @@ LCM_opts <- function() {
     def_opts$alpha <-  0
     def_opts$stickiness <- 0
     def_opts$K <- 10
-    
+
     if (nargs() < 1 || length(opts)==0){
         opts = def_opts;
     }else{
         F <- names(def_opts)
         for(i in 1:length(F)){
-            if(){
-                
-                # 以下のように，もしlistがないor空だったらデフォルトからもってくるようにしたい。
-                #if ~isfield(opts,F{f}) || isempty(opts.(F{f}))
-                #opts.(F{f}) = def_opts.(F{f});
-                
-                # pasteでlistを記述しないとだなあ。
-                
-                
+            if(eval(parse(text =paste0("length(opts$",F[i],")==0") ))){
+                eval(parse(text = paste0("opts$",F[i],"=def_opts$",F[i])))
             }
         }
     }
-    
+
     # make sure parameters aren't negative
     opts$a = max(opts$a,0);
     opts$b = max(opts$b,0);
     opts$alpha = max(opts$alpha,0);
     opts$stickiness = max(opts$stickiness,0);
-    
+
     return(list(opts=opts))
 }
