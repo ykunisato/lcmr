@@ -17,9 +17,38 @@ LCM_infer <- function(X, opts) {
     #
     #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(08/2019)
 
+    # list of results
+    results <- list()
 
     # set parameters
-    if (missing(opts)) return(opts<-NULL)
+    if (nargs() < 2){opts<-NULL}
+    opts <- LCM_opts(opts)
+    M <- opts$M
+    a <- opts$a
+    b <- opts$b
+    results$opts <- opts
+
+    # initialization
+    if(opts$alpha==0){
+        K <- 1
+    }else{
+        K <- opts$K
+    }
+
+    post <-matrix(0, 1, K)
+    post[1] <- 1
+    # posterior probability of state(M=number of particles, K=number of state)
+    post0 <- matrix(0, M, K)
+    post0[,1] <- 1
+
+
+    #[T, D] = size(X);
+    #N = zeros(M,K,D);                    % feature-cause co-occurence counts(粒子*状態*刺激)
+    #B = zeros(M,K,D);                    % feature-cause co-occurence counts(粒子*状態*刺激)
+    #Nk = zeros(M,K);                            % cause counts(粒子*状態)
+    #results.post = [ones(T,1) zeros(T,K-1)];    % cause assignments (試行数*状態数，1列目は1)
+    #results.V = zeros(T,1);                     % US predictions(試行数)
+    #z = ones(M,1);                              % 粒子の数
 
     #opts = LCM_opts(opts);
     M = opts$M;

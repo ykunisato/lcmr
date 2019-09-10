@@ -47,5 +47,5 @@ LCM_opts <- function(opts=opts) {
     opts$alpha = max(opts$alpha,0);
     opts$stickiness = max(opts$stickiness,0);
 
-    return(list(opts=opts))
+    return(opts)
 }
