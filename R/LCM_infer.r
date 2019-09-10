@@ -40,24 +40,95 @@ LCM_infer <- function(X, opts) {
     # posterior probability of state(M=number of particles, K=number of state)
     post0 <- matrix(0, M, K)
     post0[,1] <- 1
+    T <- nrow(X)
+    D <- ncol(X)
+    N <- array(0,dim=c(M,K,D))  #feature-cause co-occurence counts(particle*state*stim)
+    B <- array(0,dim=c(M,K,D))  #feature-cause co-occurence counts(particle*state*stim)
+    Nk <- matrix(0, M, K)       #cause counts(particle*state)
+    results$post <- cbind(matrix(1,T,1),matrix(0,T,K-1))  #cause assignments (trial*state，value of first row is 1)
+    results$V <- matrix(0,T,1)  # US predictions(trials)
+    z <- matrix(1,M,1)          #number of particles
 
-
-    #[T, D] = size(X);
-    #N = zeros(M,K,D);                    % feature-cause co-occurence counts(粒子*状態*刺激)
-    #B = zeros(M,K,D);                    % feature-cause co-occurence counts(粒子*状態*刺激)
-    #Nk = zeros(M,K);                            % cause counts(粒子*状態)
-    #results.post = [ones(T,1) zeros(T,K-1)];    % cause assignments (試行数*状態数，1列目は1)
-    #results.V = zeros(T,1);                     % US predictions(試行数)
-    #z = ones(M,1);                              % 粒子の数
-
-    #opts = LCM_opts(opts);
-    M = opts$M;
-    a = opts$a;
-    b = opts$b;
+    # loop over trials
+    for (t in 1:T) {
+        #calculate likelihood(particles*state*stim)
 
 
 
-    return(list(opts=opts,M=M,a=a,b=b))
+        # % calculate likelihood(粒子*状態*刺激)
+        # lik = N;
+        # lik(:,:,X(t,:)==0) = B(:,:,X(t,:)==0); %刺激のでてないところにBを入れる
+        # lik = bsxfun(@rdivide,lik+a,Nk+a+b);   %equation6の尤度の計算
+        #
+        # if opts.alpha > 0    % only update posterior if concentration parameter is non-zero
+        # % calculate CRP prior
+        # prior = Nk;
+        # for m = 1:M
+        # prior(m,z(m)) = prior(m,z(m)) + opts.stickiness; % add stickiness(粘着度，これを0以上にするとstate1になりやすい)
+        # prior(m,find(prior(m,:)==0,1)) = opts.alpha;     % probability of a new latent cause(まだアクティブになってないstateにalphaを入れる)
+        # end
+        #
+        # % posterior conditional on CS only
+        # post = prior.*squeeze(prod(lik(:,:,2:D),3)); %事前分布とCSの尤度の積(式11の第2項)
+        # post0 = bsxfun(@rdivide,post,sum(post,2));   %事後分布を，事後分布の行の和で割る（CSの確率になる）
+        #
+        # % posterior conditional on CS and US
+        # post = post.*squeeze(lik(:,:,1));            %CSの事後分布とCSとUSの尤度の積（式11の第1項)
+        # post = bsxfun(@rdivide,post,sum(post,2));    %事後分布を，事後分布の行の和で割る（USの確率になる）
+        # post = mean(post,1);                         % marginalize over particles(用意した粒子から確率を計算)
+        # end
+        # results.post(t,:) = post;     %出力する結果に保存
+
+    }
+
+    #return(list(opts=opts,M=M,a=a,b=b))
 }
 
-opts <- NULL
+
+# Matlab
+# % loop over trials
+# for t = 1:T
+# % calculate likelihood(粒子*状態*刺激)
+# lik = N;
+# lik(:,:,X(t,:)==0) = B(:,:,X(t,:)==0); %刺激のでてないところにBを入れる
+# lik = bsxfun(@rdivide,lik+a,Nk+a+b);   %equation6の尤度の計算
+#
+# if opts.alpha > 0    % only update posterior if concentration parameter is non-zero
+# % calculate CRP prior
+# prior = Nk;
+# for m = 1:M
+# prior(m,z(m)) = prior(m,z(m)) + opts.stickiness; % add stickiness(粘着度，これを0以上にするとstate1になりやすい)
+# prior(m,find(prior(m,:)==0,1)) = opts.alpha;     % probability of a new latent cause(まだアクティブになってないstateにalphaを入れる)
+# end
+#
+# % posterior conditional on CS only
+# post = prior.*squeeze(prod(lik(:,:,2:D),3)); %事前分布とCSの尤度の積(式11の第2項)
+# post0 = bsxfun(@rdivide,post,sum(post,2));   %事後分布を，事後分布の行の和で割る（CSの確率になる）
+#
+# % posterior conditional on CS and US
+# post = post.*squeeze(lik(:,:,1));            %CSの事後分布とCSとUSの尤度の積（式11の第1項)
+# post = bsxfun(@rdivide,post,sum(post,2));    %事後分布を，事後分布の行の和で割る（USの確率になる）
+# post = mean(post,1);                         % marginalize over particles(用意した粒子から確率を計算)
+# end
+# results.post(t,:) = post;     %出力する結果に保存
+#
+# % posterior predictive mean for US
+# pUS = squeeze(N(:,:,1)+a)./(Nk+a+b);    %USの尤度
+# results.V(t,1) = post0(:)'*pUS(:)./M;   %CSの元での状態の事後分布とUSの尤度を粒子で割る
+#
+#         % sample new particles
+#         x1 = X(t,:)==1; x0 = X(t,:)==0;
+#         if M==1
+#             [~,z] = max(post);                         % maximum a posteriori
+#         else
+#             [~,z] = histc(rand(1,M),[0 cumsum(post)]); % multinomial sample
+#         end
+#         Nk(:,z) = Nk(:,z) + 1;
+#         N(:,z,x1) = N(:,z,x1) + 1;
+#         B(:,z,x0) = B(:,z,x0) + 1;
+#
+#     end
+#
+#     % remove unused particles　これなんだろう。これでK=10じゃなくなっているな
+#     ix = mean(results.post)==0;
+#     results.post(:,ix) = [];
