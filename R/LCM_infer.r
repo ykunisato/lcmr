@@ -52,7 +52,13 @@ LCM_infer <- function(X, opts) {
     # loop over trials
     for (t in 1:T) {
         #calculate likelihood(particles*state*stim)
+        lik <- N
 
+        #lik(:,:,X(t,:)==0) <- B(:,:,X(t,:)==0);
+        # Why?
+        # See Gershman et al.(2010)
+
+        lik <- (lik+a)/(Nk+a+b)     #caliculate likelihood (equation6)
 
 
         # % calculate likelihood(粒子*状態*刺激)
