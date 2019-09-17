@@ -60,7 +60,7 @@ LCM_infer <- function(X, opts) {
 
         lik <- (lik+a)/(Nk+a+b)     #caliculate likelihood (equation6)
 
-
+        # Matlab code
         # % calculate likelihood(粒子*状態*刺激)
         # lik = N;
         # lik(:,:,X(t,:)==0) = B(:,:,X(t,:)==0); %刺激のでてないところにBを入れる
