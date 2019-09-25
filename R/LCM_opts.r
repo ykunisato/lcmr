@@ -26,11 +26,11 @@ LCM_opts <- function(opts=opts) {
     def_opts$M <- 100
     def_opts$a <- 1
     def_opts$b <- 1
-    def_opts$alpha <-  0
+    def_opts$c_alpha <-  0  # change parameter name form original
     def_opts$stickiness <- 0
     def_opts$K <- 10
 
-    if (nargs() < 1 || length(opts)==0){
+    if (length(opts)==0){
         opts = def_opts;
     }else{
         F <- names(def_opts)

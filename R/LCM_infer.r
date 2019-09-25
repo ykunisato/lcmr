@@ -29,7 +29,7 @@ LCM_infer <- function(X, opts) {
     results$opts <- opts
 
     # initialization
-    if(opts$alpha==0){
+    if(opts$c_alpha==0){
         K <- 1
     }else{
         K <- opts$K
@@ -51,40 +51,46 @@ LCM_infer <- function(X, opts) {
 
     # loop over trials
     for (t in 1:T) {
-        #calculate likelihood(particles*state*stim)
+        #### calculate likelihood
+        # Set Mkd in stimulus on (particles*state*stim)
+        Mkd <- N
+        # if simlus is not presented, insert Mkd in simulus off
+        Mkd[,,X[t,]==0] <- B[,,X[t,]==0]
+        # calculate likelihood using supple equation 6
+        numerator_lik <- Mkd+a
+        denominator_lik <- Nk+a+b
         lik <- N
+        for (d in 1:D){
+            lik[,,d] <- numerator_lik[,,d]/denominator_lik
+        }
 
-        #lik(:,:,X(t,:)==0) <- B(:,:,X(t,:)==0);
-        # Why?
-        # See Gershman et al.(2010)
+        # only update posterior if concentration parameter is non-zero
+        if(opts$alpha > 0){
+            # calculate CRP prior
+            prior <- Nk
+            for (m in 1:M){
+                #add stickiness(if stickiness is higher than 0, number of state leadns 1)
+                prior[m,z[m]] <- prior[m,z[m]] + opts$stickiness
+                #probability of a new latent cause(Insert alpha in non active state)
+                prior[m,which(prior[m,]==0)] <- opts$c_alpha
+            }
+            ########################
+            # posterior conditional on CS only
+            # 事前分布とCSの尤度の積(式11の第2項) supple equation 11
+            post <- prior.*squeeze(prod(lik[,,2:D],3))
+            # 事後分布を，事後分布の行の和で割る（CSの確率になる）
+            post0 <- bsxfun(@rdivide,post,sum(post,2))
 
-        lik <- (lik+a)/(Nk+a+b)     #caliculate likelihood (equation6)
-
-        # Matlab code
-        # % calculate likelihood(粒子*状態*刺激)
-        # lik = N;
-        # lik(:,:,X(t,:)==0) = B(:,:,X(t,:)==0); %刺激のでてないところにBを入れる
-        # lik = bsxfun(@rdivide,lik+a,Nk+a+b);   %equation6の尤度の計算
-        #
-        # if opts.alpha > 0    % only update posterior if concentration parameter is non-zero
-        # % calculate CRP prior
-        # prior = Nk;
-        # for m = 1:M
-        # prior(m,z(m)) = prior(m,z(m)) + opts.stickiness; % add stickiness(粘着度，これを0以上にするとstate1になりやすい)
-        # prior(m,find(prior(m,:)==0,1)) = opts.alpha;     % probability of a new latent cause(まだアクティブになってないstateにalphaを入れる)
-        # end
-        #
-        # % posterior conditional on CS only
-        # post = prior.*squeeze(prod(lik(:,:,2:D),3)); %事前分布とCSの尤度の積(式11の第2項)
-        # post0 = bsxfun(@rdivide,post,sum(post,2));   %事後分布を，事後分布の行の和で割る（CSの確率になる）
-        #
-        # % posterior conditional on CS and US
-        # post = post.*squeeze(lik(:,:,1));            %CSの事後分布とCSとUSの尤度の積（式11の第1項)
-        # post = bsxfun(@rdivide,post,sum(post,2));    %事後分布を，事後分布の行の和で割る（USの確率になる）
-        # post = mean(post,1);                         % marginalize over particles(用意した粒子から確率を計算)
-        # end
-        # results.post(t,:) = post;     %出力する結果に保存
-
+            # posterior conditional on CS and US
+            # CSの事後分布とCSとUSの尤度の積（式11の第1項)
+            post <- post.*squeeze(lik[,,1])
+            # 事後分布を，事後分布の行の和で割る（USの確率になる）
+            post <- bsxfun(@rdivide,post,sum(post,2))
+            # marginalize over particles(用意した粒子から確率を計算)
+            post <- mean(post,1);
+        }
+        # output of results
+        results.post[t,:] = post
     }
 
     #return(list(opts=opts,M=M,a=a,b=b))
@@ -92,32 +98,6 @@ LCM_infer <- function(X, opts) {
 
 
 # Matlab
-# % loop over trials
-# for t = 1:T
-# % calculate likelihood(粒子*状態*刺激)
-# lik = N;
-# lik(:,:,X(t,:)==0) = B(:,:,X(t,:)==0); %刺激のでてないところにBを入れる
-# lik = bsxfun(@rdivide,lik+a,Nk+a+b);   %equation6の尤度の計算
-#
-# if opts.alpha > 0    % only update posterior if concentration parameter is non-zero
-# % calculate CRP prior
-# prior = Nk;
-# for m = 1:M
-# prior(m,z(m)) = prior(m,z(m)) + opts.stickiness; % add stickiness(粘着度，これを0以上にするとstate1になりやすい)
-# prior(m,find(prior(m,:)==0,1)) = opts.alpha;     % probability of a new latent cause(まだアクティブになってないstateにalphaを入れる)
-# end
-#
-# % posterior conditional on CS only
-# post = prior.*squeeze(prod(lik(:,:,2:D),3)); %事前分布とCSの尤度の積(式11の第2項)
-# post0 = bsxfun(@rdivide,post,sum(post,2));   %事後分布を，事後分布の行の和で割る（CSの確率になる）
-#
-# % posterior conditional on CS and US
-# post = post.*squeeze(lik(:,:,1));            %CSの事後分布とCSとUSの尤度の積（式11の第1項)
-# post = bsxfun(@rdivide,post,sum(post,2));    %事後分布を，事後分布の行の和で割る（USの確率になる）
-# post = mean(post,1);                         % marginalize over particles(用意した粒子から確率を計算)
-# end
-# results.post(t,:) = post;     %出力する結果に保存
-#
 # % posterior predictive mean for US
 # pUS = squeeze(N(:,:,1)+a)./(Nk+a+b);    %USの尤度
 # results.V(t,1) = post0(:)'*pUS(:)./M;   %CSの元での状態の事後分布とUSの尤度を粒子で割る

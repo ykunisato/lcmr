@@ -1,3 +1,4 @@
+rm(list = ls())
 setwd(paste0(getwd(),"/R"))
 # function already made
 source("LCM_opts.r")
@@ -25,4 +26,12 @@ X <- matrix(c(
 )
 
 # check function
+opts <- list()
+# change paramerter name from alpha to c_alpha
+opts$c_alpha <- 0.5
+
+
+
+
+
 
