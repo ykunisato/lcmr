@@ -1,7 +1,12 @@
 rm(list = ls())
+
+######### Dependencies
+library(pracma)
+
 setwd(paste0(getwd(),"/R"))
 # function already made
 source("LCM_opts.r")
+source("LCM_infer.r")
 
 # test stimulus set
 X <- matrix(c(

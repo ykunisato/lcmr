@@ -75,58 +75,55 @@ LCM_infer <- function(X, opts) {
                         #add stickiness(if stickiness is higher than 0, number of state leadns 1)
                         prior[m,z[m]] <- prior[m,z[m]] + opts$stickiness
                         #probability of a new latent cause(Insert alpha in non active state)
-                        prior[m,which(prior[m,]==0)] <- opts$c_alpha
+                        prior[m,which(prior[m,]==0)[1]] <- opts$c_alpha
                     }
                     # posterior conditional on CS only
-                    # product of prior and likelihood of CS using supple 2nd term of equation 11
+                    # element-wise product of prior and likelihood of CS using supple 2nd term of equation 11
                     num_add_cs <- D-2 #if multiple CS are used, additional number of CS(use two CS, num_add_cs is 1)
-                    if(num_cs == 1){
+                    if(num_add_cs == 0){
                         prod_like_cs <- lik[,,2]
                     }else{
                         prod_like_cs <- lik[,,2]
                         for (d in 1:num_add_cs) {
-                            print(d)
                             prod_like_cs <- prod_like_cs*lik[,,2+d]
                         }
                     }
-                    post_cs <- prior*drop(prod_like_cs)
-
-                    # devide posterior col sum of posterior(is mean prob of CS)
-                    post0 <- post/sum(post,2)
+                    post <- prior*drop(prod_like_cs)
+                    # devide posterior rowsum of posterior(is mean prob of CS)
+                    post0 <- post/rowSums(post)
 
                     # posterior conditional on CS and US
-                    # CSの事後分布とCSとUSの尤度の積（式11の第1項)
-                    post <- post.*squeeze(lik[,,1])
-                    # 事後分布を，事後分布の行の和で割る（USの確率になる）
-                    post <- bsxfun(@rdivide,post,sum(post,2))
-                    # marginalize over particles(用意した粒子から確率を計算)
-                    post <- mean(post,1);
+                    # element-wise product of posterior of CS and likelihood of US using supple 1st term of equation 11
+                    post <- post*drop(lik[,,1])
+                    # posterior of US is devided by row sum of posteriro of US（probability of US）
+                    post <- post/rowSums(post)
+                    # marginalize over particles
+                    post <- colMeans(post)
             }
             # output of results
-            results.post[t,:] = post
+            results$post[t,] = post
+            # posterior predictive mean for US
+            # likelihoof of US
+            pUS = drop(N[,,1]+a)/(Nk+a+b)
+            # product of posteriro of CS and likelihood of US is devided by number of particles
+            results$V[t,1] = t(as.vector(post0))%*%as.vector(pUS)/M
+
+            # sample new particles
+            x1 <- X[t,]==1
+            x0 <- X[t,]==0
+            if(M==1){
+                # maximum a posteriori
+                z = which.max(post)
+            }else{
+                #  multinomial sample
+                z <- histc(runif(M,0,1), c(0,cumsum(post)))$bin
+            }
+            Nk[,z] <- Nk[,z] + 1
+            N[,z,x1] <- N[,z,x1] + 1
+            B[,z,x0] <- B[,z,x0] + 1
         }
-    #return(list(opts=opts,M=M,a=a,b=b))
+    # remove unused state
+    ix <- colMeans(results$post)==0
+    results$post <- results$post[,-ix]
+    return(list(opts=opts,V=results$V,post=results$post))
 }
-
-
-# Matlab
-# % posterior predictive mean for US
-# pUS = squeeze(N(:,:,1)+a)./(Nk+a+b);    %USの尤度
-# results.V(t,1) = post0(:)'*pUS(:)./M;   %CSの元での状態の事後分布とUSの尤度を粒子で割る
-#
-#         % sample new particles
-#         x1 = X(t,:)==1; x0 = X(t,:)==0;
-#         if M==1
-#             [~,z] = max(post);                         % maximum a posteriori
-#         else
-#             [~,z] = histc(rand(1,M),[0 cumsum(post)]); % multinomial sample
-#         end
-#         Nk(:,z) = Nk(:,z) + 1;
-#         N(:,z,x1) = N(:,z,x1) + 1;
-#         B(:,z,x0) = B(:,z,x0) + 1;
-#
-#     end
-#
-#     % remove unused particles　これなんだろう。これでK=10じゃなくなっているな
-#     ix = mean(results.post)==0;
-#     results.post(:,ix) = [];
