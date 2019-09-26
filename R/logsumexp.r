@@ -39,3 +39,22 @@ LCM_fit <- function(x=x,dim=dim) {
 
   return(list(s=s))
 }
+
+# Matlab
+% Returns log(sum(exp(x),dim)) while avoiding numerical underflow.
+% Default is dim = 1 (columns).
+
+if nargin == 1
+% Determine which dimension sum will use
+dim = find(size(x)~=1,1);
+if isempty(dim), dim = 1; end
+end
+
+% subtract the largest in each column
+y = max(x,[],dim);
+x = bsxfun(@minus,x,y);
+s = y + log(sum(exp(x),dim));
+i = find(~isfinite(y));
+if ~isempty(i)
+s(i) = y(i);
+end
