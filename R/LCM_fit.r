@@ -28,9 +28,13 @@ LCM_fit <- function(data=data,opts=opts) {
     return(list(opts=opts))
   }
 
+
+  ######### I will modify the code for long format data(use test data set)
   for (s in 1:vector) {
 
   }
+
+
 
   #for s = 1:length(data)
   #  disp(['Subject ',num2str(s)]);
