@@ -1,5 +1,5 @@
 # LCM_infer ===========================================================================
-LCM_infer <- function(X, opts) {
+LCM_infer <- function(X=X, opts=opts) {
     # Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
     #
     # USAGE: results = LCM(X,[opts])
@@ -123,7 +123,6 @@ LCM_infer <- function(X, opts) {
             B[,z,x0] <- B[,z,x0] + 1
         }
     # remove unused state
-    ix <- colMeans(results$post)==0
-    results$post <- results$post[,-ix]
+        results$post <- results$post[,colMeans(results$post)!=0]
     return(list(opts=opts,V=results$V,post=results$post))
 }
