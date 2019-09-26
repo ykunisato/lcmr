@@ -12,7 +12,8 @@ LCM_fit <- function(x=x,dim=dim) {
   # OUTPUTS:
   #   log_sum_exp: log sum exp of x
   #
-  #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(08/2019)
+  #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(09/2019)
+
   if (nargs() == 1){
     dim = 1
   }

@@ -20,7 +20,7 @@ LCM_opts <- function(opts=opts) {
     #   opts.stickiness = 0 (stickiness parameer for Chinese restaurant process prior)
     #   opts.K = 10         (maximum number of latent causes)
     #
-    #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(08/2019)
+    #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(09/2019)
 
     def_opts   <- list()
     def_opts$M <- 100

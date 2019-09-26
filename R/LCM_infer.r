@@ -15,7 +15,7 @@ LCM_infer <- function(X, opts) {
     #   post - [T x K] latent cause posterior, where post(t,k) is the probability of latent cause k being active on trial t,
     #         after observing the all the features. K (the number of latent causes) is determined adaptively by the model.
     #
-    #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(08/2019)
+    #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(09/2019)
 
     # set parameters
         results <- list()
