@@ -76,7 +76,7 @@ LCM_infer <- function(X, opts) {
             }
             ########################
             # posterior conditional on CS only
-            # 事前分布とCSの尤度の積(式11の第2項) supple equation 11
+            # 事前分布とCSの尤度の積　supple 2nd term of equation 11
             post <- prior.*squeeze(prod(lik[,,2:D],3))
             # 事後分布を，事後分布の行の和で割る（CSの確率になる）
             post0 <- bsxfun(@rdivide,post,sum(post,2))
