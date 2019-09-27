@@ -1,5 +1,5 @@
 # LCM_lik ===========================================================================
-LCM_lik <- function(alpha=alpha,data=data,opts=opts) {
+LCM_lik <- function(alpha=alpha,data=data,n_cs=n_cs,opts=opts) {
   # Compute log-likelihood of data under the latent cause model.
   #
   # USAGE: LCM_lik(alpha,data,[opts])
@@ -22,7 +22,8 @@ LCM_lik <- function(alpha=alpha,data=data,opts=opts) {
   opts <- list()
   opts$c_alpha <- alpha
   # un particle filter
-  results <- LCM_infer(cbind(data$US,data$CS),opts)
+  max_index_cs <- 3+n_cs
+  results <- LCM_infer(cbind(data$US,data[,4:max_index_cs]),opts)
 
   # use linear regression to fit model output to CR
   N <- length(results$V)
