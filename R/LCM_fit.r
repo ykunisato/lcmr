@@ -36,6 +36,7 @@ LCM_fit <- function(data=data,opts=opts) {
 
 
 
+
   #for s = 1:length(data)
   #  disp(['Subject ',num2str(s)]);
   #  for i = 1:length(alpha)
