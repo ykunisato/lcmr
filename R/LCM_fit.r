@@ -67,6 +67,5 @@ LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
   #  % aplha = posterior mean alpha
   #  results(s).logBF = L - log(N) - results(s).lik(1);
   #end
-
     return(list(results=results))
 }
