@@ -37,35 +37,23 @@ LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
 
   N_participants <- length(unique(data$ID))
   ID_list <- unique(data$ID)
+  post_mean_alpha <- vector()
+  logBF <- vector()
   for (s in 1:N_participants) {
     cat('Participants',s, "\n")
     data_subset <- subset(data, ID==ID_list[s])
+    lik <- vector()
+    b <- vector()
+    sd <- vector()
+
     for (i in 1:N) {
       results <- LCM_lik(alpha[i],data_subset,n_cs,opts)
-
+      lik[i] <- results$lik
     }
-    L <- logsumexp(results(s).lik)
-    results(s).alpha <- alpha
-    results(s).P <- exp(results(s).lik-L)
-    results(s).alpha <- alpha*results(s).P
-    # aplha = posterior mean alpha
-    results(s).logBF <- L - log(N) - results(s).lik(1)
-    results(s).lik(i,1) <-
-    results(s).latents(i)<-
+    L <- logsumexp(lik)
+    P <- exp(lik-L)
+    post_mean_alpha[s] <- alpha%*%P
+    logBF[s] <- L - log(N) - lik[1]
   }
-
-  # Matlab
-  #for s = 1:length(data)
-  #  disp(['Subject ',num2str(s)]);
-  #  for i = 1:length(alpha)
-  #    [results(s).lik(i,1), results(s).latents(i)] = LCM_lik(alpha(i),data(s),opts);
-  #  end
-  #  L = logsumexp(results(s).lik);
-  #  results(s).alpha = alpha;
-  #  results(s).P = exp(results(s).lik-L);
-  #  results(s).alpha = alpha*results(s).P;
-  #  % aplha = posterior mean alpha
-  #  results(s).logBF = L - log(N) - results(s).lik(1);
-  #end
-    return(list(results=results))
+  return(list(post_mean_alpha=post_mean_alpha,logBF=logBF))
 }

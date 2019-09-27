@@ -4,7 +4,8 @@ library(pracma)
 source("LCM_opts.r")
 source("LCM_infer.r")
 source("LCM_lik.r")
-
+source("LCM_fit.r")
+source("logsumexp.r")
 
 data <- read.csv("test_data.csv")
 results <- LCM_fit(data,2)
