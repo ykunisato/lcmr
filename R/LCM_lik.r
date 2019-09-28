@@ -1,7 +1,5 @@
 #' Compute log-likelihood of data under the latent cause model.
 #'
-#' USAGE: LCM_lik(alpha,data,[opts])
-#'
 #' INPUTS:
 #'   alpha - concentration parameter
 #'   data - single-subject data
@@ -12,6 +10,8 @@
 #'               .b - beta coefficient mapping model CR to  measured CR
 #'               .sd - maximum likelihood standard deviation
 #'               .CR - predicted CR
+#' @examples
+#' LCM_lik(alpha,data,[opts])
 
 LCM_lik <- function(alpha=alpha,data=data,n_cs=n_cs,opts=opts) {
   # set concentration parameter

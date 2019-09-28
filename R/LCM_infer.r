@@ -1,6 +1,6 @@
 #' Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
 #' @importFrom histc pracma
-#' USAGE: results = LCM(X,[opts])
+#'
 #' INPUTS:
 #' X - [T x D] stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
 #' The first feature (column 1) is the US, and the rest of the features (column 2 through D) are CSs.
@@ -12,6 +12,9 @@
 #' V - [T x 1] US prediction
 #' post - [T x K] latent cause posterior, where post(t,k) is the probability of latent cause k being active on trial t,
 #' after observing the all the features. K (the number of latent causes) is determined adaptively by the model.
+#'
+#' @examples
+#' results <- LCM(X,opts)
 
 LCM_infer <- function(X=X, opts=opts) {
     # set parameters

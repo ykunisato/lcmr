@@ -1,5 +1,4 @@
 #' Fit latent cause model to data.
-#' USAGE: results = LCM_fit(data,[opts])
 #' INPUTS:
 #'   data - long format data containing the following variables:
 #'         ID: Subject ID
@@ -15,6 +14,8 @@
 #'               .lik - log-likelihood for each alpha value
 #'               .latents - latent variables for each alpha value (see LCM_infer)
 #'               .logBF - log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+#' @examples
+#' results <- LCM_fit(data,opts)
 LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
   # argument
   if (missing(opts)) {

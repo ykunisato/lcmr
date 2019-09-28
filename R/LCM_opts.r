@@ -1,7 +1,4 @@
 #' Set option of latent cause model
-#'     # Set options.
-#'
-#' USAGE: opts = LCM_opts([opts])
 #'
 #' INPUTS:
 #'   opts (optional) - options structure with a subset of fields
@@ -18,6 +15,9 @@
 #'   opts.alpha = 0      (concentration parameter for Chinese restaurant process prior)
 #'   opts.stickiness = 0 (stickiness parameer for Chinese restaurant process prior)
 #'   opts.K = 10         (maximum number of latent causes)
+#'
+#' @examples
+#' opts <- LCM_opts(opts)
 LCM_opts <- function(opts=opts) {
     def_opts   <- list()
     def_opts$M <- 100
