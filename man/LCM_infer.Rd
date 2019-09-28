@@ -2,12 +2,27 @@
 % Please edit documentation in R/LCM_infer.R
 \name{LCM_infer}
 \alias{LCM_infer}
-\title{Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.}
+\title{Particle filtering or local maximum a posteriori inference for latent cause model of associative learning}
 \usage{
 LCM_infer(X = X, opts = opts)
 }
+\arguments{
+\item{X}{\link{T x D} stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
+The first feature (column 1) is the US, and the rest of the features (column 2 through D) are CSs.}
+
+\item{opts}{(optional) structure containing various options (see LCM_opts). Missing fields are set to defaults.
+If opts.M = 1, then the model computes a local MAP estimate.}
+
+\item{opts}{option}
+}
+\value{
+opts - options (missing fields set to defaults)
+V - \link{T x 1} US prediction
+post - \link{T x K} latent cause posterior, where post(t,k) is the probability of latent cause k being active on trial t,
+after observing the all the features. K (the number of latent causes) is determined adaptively by the model.
+}
 \description{
-Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
+\code{LCM_infer}
 }
 \examples{
 results <- LCM(X,opts)

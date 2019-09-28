@@ -6,17 +6,22 @@
 \usage{
 LCM_lik(alpha = alpha, data = data, n_cs = n_cs, opts = opts)
 }
-\description{
-INPUTS:
-alpha - concentration parameter
-data - single-subject data
-opts - options structure
-OUTPUTS:
+\arguments{
+\item{alpha}{concentration parameter}
+
+\item{data}{single-subject data}
+
+\item{opts}{options structure}
+}
+\value{
 lik - log-likelihood
 latents - structure containing latent variables:
 .b - beta coefficient mapping model CR to  measured CR
 .sd - maximum likelihood standard deviation
 .CR - predicted CR
+}
+\description{
+\code{LCM_lik}
 }
 \examples{
 LCM_lik(alpha,data,[opts])

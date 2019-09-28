@@ -1,10 +1,9 @@
 #' Compute log-likelihood of data under the latent cause model.
-#' \code{LCM_lik}
 #'
-#' @param
-#'   alpha - concentration parameter
-#'   data - single-subject data
-#'   opts - options structure
+#' \code{LCM_lik}
+#' @param alpha concentration parameter
+#' @param data single-subject data
+#' @param opts options structure
 #'
 #' @return
 #'   lik - log-likelihood

@@ -2,28 +2,34 @@
 % Please edit documentation in R/LCM_opts.R
 \name{LCM_opts}
 \alias{LCM_opts}
-\title{Set option of latent cause model}
+\title{Set option of latent cause model
+\code{LCM_opts} set option of latent cause model.}
 \usage{
 LCM_opts(opts = opts)
 }
-\description{
-INPUTS:
-opts (optional) - options structure with a subset of fields
+\arguments{
+\item{opts}{(optional) - options structure with a subset of fields
 specified. All missing or empty fields will be set to defaults. If
-opts = [], then the entire structure is set to defaults.
+opts = [], then the entire structure is set to defaults.}
 }
-\details{
-OUTPUTS:
+\value{
+If
 opts - fully specified options structure
 
-DEFAULTS:
-opts.M = 100        (number of particles)
-opts.a = 1          (hyperparameter of beta prior: pseudo-count for feature presence)
-opts.b = 1          (hyperparameter of beta prior: pseudo-count for feature absence)
-opts.alpha = 0      (concentration parameter for Chinese restaurant process prior)
-opts.stickiness = 0 (stickiness parameer for Chinese restaurant process prior)
-opts.K = 10         (maximum number of latent causes)
+Default values:
+opts$M <- 100        (number of particles)
+opts$a <- 1          (hyperparameter of beta prior: pseudo-count for feature presence)
+opts$b <- 1          (hyperparameter of beta prior: pseudo-count for feature absence)
+opts$alpha <- 0      (concentration parameter for Chinese restaurant process prior)
+opts$stickiness <- 0 (stickiness parameer for Chinese restaurant process prior)
+opts$K <- 10         (maximum number of latent causes)
+}
+\description{
+Set option of latent cause model
+\code{LCM_opts} set option of latent cause model.
 }
 \examples{
+opts <- list()
+opts$M <- 1000
 opts <- LCM_opts(opts)
 }

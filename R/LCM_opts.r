@@ -1,8 +1,7 @@
 #' Set option of latent cause model
 #' \code{LCM_opts} set option of latent cause model.
 #'
-#' @param
-#' opts (optional) - options structure with a subset of fields
+#' @param opts (optional) - options structure with a subset of fields
 #'       specified. All missing or empty fields will be set to defaults. If
 #'       opts = [], then the entire structure is set to defaults.
 #'
