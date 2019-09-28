@@ -50,7 +50,7 @@ LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
       results <- LCM_lik(alpha[i],data_subset,n_cs,opts)
       lik[i] <- results$lik
     }
-    L <- logsumexp(lik)
+    L <- log(sum(exp(lik)))
     P <- exp(lik-L)
     post_mean_alpha[s] <- alpha%*%P
     logBF[s] <- L - log(N) - lik[1]

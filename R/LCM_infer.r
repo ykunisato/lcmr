@@ -1,4 +1,4 @@
-# Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
+#' Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
 #' @importFrom histc pracma
 LCM_infer <- function(X=X, opts=opts) {
     # Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
