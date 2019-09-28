@@ -1,10 +1,12 @@
 #' Compute log-likelihood of data under the latent cause model.
+#' \code{LCM_lik}
 #'
-#' INPUTS:
+#' @param
 #'   alpha - concentration parameter
 #'   data - single-subject data
 #'   opts - options structure
-#' OUTPUTS:
+#'
+#' @return
 #'   lik - log-likelihood
 #'   latents - structure containing latent variables:
 #'               .b - beta coefficient mapping model CR to  measured CR

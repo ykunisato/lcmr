@@ -1,5 +1,6 @@
 #' Fit latent cause model to data.
-#' INPUTS:
+#' \code{LCM_fit}
+#' @param
 #'   data - long format data containing the following variables:
 #'         ID: Subject ID
 #'         CR: Conditioned Response
@@ -7,7 +8,7 @@
 #'         CS: Conditioned Stimului(CS1,CS2,CS3...)
 #'         n_cs - number of CS
 #'        opts (optional) - structure defining LCM options (see LCM_opts.m)
-#' OUTPUTS:
+#' @return
 #'   results - [nSubjects x 1] structure containing the following fields:
 #'               .alpha - concentration parameter values
 #'               .P - posterior probability distribution over alpha

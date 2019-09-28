@@ -1,13 +1,13 @@
 #' Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
+#' \code{LCM_infer}
 #' @importFrom pracma histc
 #'
-#' INPUTS:
-#' X - [T x D] stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
+#' @param X [T x D] stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
 #' The first feature (column 1) is the US, and the rest of the features (column 2 through D) are CSs.
 #' opts (optional) - structure containing various options (see LCM_opts). Missing fields are set to defaults.
 #' If opts.M = 1, then the model computes a local MAP estimate.
-#'
-#' OUTPUTS:
+#' @param opts option
+#' @return
 #' opts - options (missing fields set to defaults)
 #' V - [T x 1] US prediction
 #' post - [T x K] latent cause posterior, where post(t,k) is the probability of latent cause k being active on trial t,
