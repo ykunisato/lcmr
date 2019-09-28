@@ -2,31 +2,33 @@
 % Please edit documentation in R/LCM_fit.R
 \name{LCM_fit}
 \alias{LCM_fit}
-\title{Fit latent cause model to data}
+\title{Fit latent cause model}
 \usage{
-LCM_fit(data = data, n_cs = n_cs, opts = opts)
+LCM_fit(data, n_cs, opts)
 }
 \arguments{
-\item{data}{long format data containing the following variables:
-ID: Subject ID
-CR: Conditioned Response
-US: Unconditioned Stimulus
-CS: Conditioned Stimului(CS1,CS2,CS3...)
-n_cs - number of CS}
+\item{data}{long format data containing the following variables
+(Order and name is exactly the same as following):\preformatted{   ID  Subject ID
 
-\item{opts}{(optional) structure defining LCM options (see LCM_opts.m)}
+   CR  Conditioned Response
+
+   US  Unconditioned Stimulus
+
+   CS  Conditioned Stimului. If using multiple CS, set variables name as CS1,CS2,CS3...
+}}
+
+\item{n_cs}{number of CS}
+
+\item{opts}{(optional) structure defining LCM options (see LCM_opts)}
 }
 \value{
-results - \link{nSubjects x 1} structure containing the following fields:
-.alpha - concentration parameter values
-.P - posterior probability distribution over alpha
-.lik - log-likelihood for each alpha value
-.latents - latent variables for each alpha value (see LCM_infer)
-.logBF - log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+post_mean_alpha: posterior mean alpha
+
+logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
 }
 \description{
-\code{LCM_fit}
+\code{LCM_fit} fit latent cause model to conditioning data.
 }
 \examples{
-results <- LCM_fit(data,opts)
+# results <- LCM_fit(data,opts)
 }

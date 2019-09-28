@@ -1,23 +1,25 @@
-#' Particle filtering or local maximum a posteriori inference for latent cause model of associative learning
+#' Particle filtering or local maximum a posteriori inference
 #'
-#' \code{LCM_infer}
+#' \code{LCM_infer} conduct Particle filtering or local maximum a posteriori inference
+#' for latent cause model of associative learning
+#'
 #' @importFrom pracma histc
 #'
-#' @param X [T x D] stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
-#' The first feature (column 1) is the US, and the rest of the features (column 2 through D) are CSs.
-#' @param opts (optional) structure containing various options (see LCM_opts). Missing fields are set to defaults.
-#' If opts.M = 1, then the model computes a local MAP estimate.
-#' @param opts option
-#' @return
-#' opts - options (missing fields set to defaults)
-#' V - [T x 1] US prediction
-#' post - [T x K] latent cause posterior, where post(t,k) is the probability of latent cause k being active on trial t,
-#' after observing the all the features. K (the number of latent causes) is determined adaptively by the model.
+#' @param X matrix of stimulus inputs consisting of the number of trial rows and
+#' the number of stimulus features columns. The first feature (column 1) is the US,
+#' and the rest of the features (column 2 through D) are CSs.
+#' @param opts (optional)structure containing various options (see LCM_opts).
+#' Missing fields are set to defaults. If opts.M = 1, then the model computes a local MAP estimate.
+#' @return opts: options used in inference
+#' @return V: US prediction each trial
+#' @return post: matrix of latent cause posterior consisting of the number of trial rows and
+#' the probability of latent cause k being active on trial t, after observing the all the features.
+#' K (the number of latent causes) is determined adaptively by the model.
 #'
 #' @examples
-#' results <- LCM(X,opts)
+#' # results <- LCM(X,opts)
 
-LCM_infer <- function(X=X, opts=opts) {
+LCM_infer <- function(X, opts) {
     # set parameters
         results <- list()
         if (nargs() < 2){opts<-NULL}

@@ -1,23 +1,24 @@
-#' Fit latent cause model to data
+#' Fit latent cause model
 #'
-#' \code{LCM_fit}
-#' @param data long format data containing the following variables:
-#'         ID: Subject ID
-#'         CR: Conditioned Response
-#'         US: Unconditioned Stimulus
-#'         CS: Conditioned Stimului(CS1,CS2,CS3...)
-#'         n_cs - number of CS
-#' @param opts (optional) structure defining LCM options (see LCM_opts.m)
-#' @return
-#'   results - [nSubjects x 1] structure containing the following fields:
-#'               .alpha - concentration parameter values
-#'               .P - posterior probability distribution over alpha
-#'               .lik - log-likelihood for each alpha value
-#'               .latents - latent variables for each alpha value (see LCM_infer)
-#'               .logBF - log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+#' \code{LCM_fit} fit latent cause model to conditioning data.
+#'
+#' @param data long format data containing the following variables
+#'        (Order and name is exactly the same as following):
+#'
+#'        ID  Subject ID
+#'
+#'        CR  Conditioned Response
+#'
+#'        US  Unconditioned Stimulus
+#'
+#'        CS  Conditioned Stimului. If using multiple CS, set variables name as CS1,CS2,CS3...
+#' @param n_cs number of CS
+#' @param opts (optional) structure defining LCM options (see LCM_opts)
+#' @return post_mean_alpha: posterior mean alpha
+#' @return logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
 #' @examples
-#' results <- LCM_fit(data,opts)
-LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
+#' # results <- LCM_fit(data,opts)
+LCM_fit <- function(data,n_cs,opts) {
   # argument
   if (missing(opts)) {
     opts <- list()

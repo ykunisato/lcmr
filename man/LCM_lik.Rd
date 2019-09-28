@@ -2,27 +2,32 @@
 % Please edit documentation in R/LCM_lik.R
 \name{LCM_lik}
 \alias{LCM_lik}
-\title{Compute log-likelihood of data under the latent cause model.}
+\title{Compute log likelihood}
 \usage{
-LCM_lik(alpha = alpha, data = data, n_cs = n_cs, opts = opts)
+LCM_lik(alpha, data, n_cs, opts)
 }
 \arguments{
 \item{alpha}{concentration parameter}
 
 \item{data}{single-subject data}
 
+\item{n_cs}{number of CS}
+
 \item{opts}{options structure}
 }
 \value{
-lik - log-likelihood
-latents - structure containing latent variables:
-.b - beta coefficient mapping model CR to  measured CR
-.sd - maximum likelihood standard deviation
-.CR - predicted CR
+lik: log-likelihood
+
+latents: structure containing latent variables:\preformatted{          b: beta coefficient mapping model CR to  measured CR
+
+          sd: maximum likelihood standard deviation
+
+          CR: predicted CR
+}
 }
 \description{
-\code{LCM_lik}
+\code{LCM_lik} compute log likelihood of data under the latent cause model.
 }
 \examples{
-LCM_lik(alpha,data,[opts])
+# results <- LCM_lik(alpha,data,n_cs,opts)
 }

@@ -1,26 +1,32 @@
-#' Set option of latent cause model
+#' Set option
+#'
 #' \code{LCM_opts} set option of latent cause model.
 #'
-#' @param opts (optional) - options structure with a subset of fields
-#'       specified. All missing or empty fields will be set to defaults. If
-#'       opts = [], then the entire structure is set to defaults.
+#' @param opts (optional)options structure with a subset of fields specified.
+#'       All missing or empty fields will be set to default values.
 #'
-#' @return If
-#'   opts - fully specified options structure
+#'   Default values:
 #'
-#' Default values:
 #'   opts$M <- 100        (number of particles)
+#'
 #'   opts$a <- 1          (hyperparameter of beta prior: pseudo-count for feature presence)
+#'
 #'   opts$b <- 1          (hyperparameter of beta prior: pseudo-count for feature absence)
+#'
 #'   opts$alpha <- 0      (concentration parameter for Chinese restaurant process prior)
+#'
 #'   opts$stickiness <- 0 (stickiness parameer for Chinese restaurant process prior)
+#'
 #'   opts$K <- 10         (maximum number of latent causes)
 #'
+#' @return opts: fully specified options structure
+#'
 #' @examples
-#' opts <- list()
-#' opts$M <- 1000
-#' opts <- LCM_opts(opts)
-LCM_opts <- function(opts=opts) {
+#' # opts <- list()
+#' # opts$M <- 1000
+#' # opts <- LCM_opts(opts)
+
+LCM_opts <- function(opts) {
     def_opts   <- list()
     def_opts$M <- 100
     def_opts$a <- 1
