@@ -1,5 +1,5 @@
 #' Particle filtering or local maximum a posteriori inference for latent cause model of associative learning.
-#' @importFrom histc pracma
+#' @importFrom pracma histc
 #'
 #' INPUTS:
 #' X - [T x D] stimulus inputs, where T is the number of timepoints and D is the number of stimulus features.
