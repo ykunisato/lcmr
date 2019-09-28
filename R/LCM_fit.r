@@ -1,4 +1,4 @@
-# LCM_fit ===========================================================================
+# Fit latent cause model to data
 LCM_fit <- function(data=data,n_cs=n_cs,opts=opts) {
   # Fit latent cause model to data.
   # USAGE: results = LCM_fit(data,[opts])
