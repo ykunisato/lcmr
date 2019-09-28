@@ -1,30 +1,25 @@
-# LCM_lik ===========================================================================
-LCM_lik <- function(alpha=alpha,data=data,n_cs=n_cs,opts=opts) {
-  # Compute log-likelihood of data under the latent cause model.
-  #
-  # USAGE: LCM_lik(alpha,data,[opts])
-  #
-  # INPUTS:
-  #   alpha - concentration parameter
-  #   data - single-subject data
-  #   opts - options structure
-  #
-  # OUTPUTS:
-  #   lik - log-likelihood
-  #   latents - structure containing latent variables:
-  #               .b - beta coefficient mapping model CR to  measured CR
-  #               .sd - maximum likelihood standard deviation
-  #               .CR - predicted CR
-  #
-  #  This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(09/2019)
+#' Compute log-likelihood of data under the latent cause model.
+#'
+#' USAGE: LCM_lik(alpha,data,[opts])
+#'
+#' INPUTS:
+#'   alpha - concentration parameter
+#'   data - single-subject data
+#'   opts - options structure
+#' OUTPUTS:
+#'   lik - log-likelihood
+#'   latents - structure containing latent variables:
+#'               .b - beta coefficient mapping model CR to  measured CR
+#'               .sd - maximum likelihood standard deviation
+#'               .CR - predicted CR
 
+LCM_lik <- function(alpha=alpha,data=data,n_cs=n_cs,opts=opts) {
   # set concentration parameter
   opts <- list()
   opts$c_alpha <- alpha
   # un particle filter
   max_index_cs <- 3+n_cs
   results <- LCM_infer(cbind(data$US,data[,4:max_index_cs]),opts)
-
   # use linear regression to fit model output to CR
   N <- length(results$V)
   X <- results$V
@@ -36,7 +31,6 @@ LCM_lik <- function(alpha=alpha,data=data,n_cs=n_cs,opts=opts) {
   sd = sqrt(mean((data$CR - CRpred)^2))
   # log-likelihood
   lik = sum(log(dnorm(data$CR-CRpred, mean = 0, sd = sd)))
-
   # return latent variables
   latents <- list()
   latents$results = results
