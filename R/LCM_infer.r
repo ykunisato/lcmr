@@ -15,7 +15,7 @@
 #' @return post: matrix of latent cause posterior consisting of the number of trial rows and
 #' the probability of latent cause k being active on trial t, after observing the all the features.
 #' K (the number of latent causes) is determined adaptively by the model.
-#'
+#' @export
 #' @examples
 #' # results <- LCM(X,opts)
 

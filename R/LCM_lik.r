@@ -15,6 +15,7 @@
 #'               sd: maximum likelihood standard deviation
 #'
 #'               CR: predicted CR
+#' @export
 #' @examples
 #' # results <- LCM_lik(alpha,data,n_cs,opts)
 

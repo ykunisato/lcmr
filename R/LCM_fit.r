@@ -16,6 +16,7 @@
 #' @param opts (optional) structure defining LCM options (see LCM_opts)
 #' @return post_mean_alpha: posterior mean alpha
 #' @return logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+#' @export
 #' @examples
 #' # results <- LCM_fit(data,n_cs,opts)
 LCM_fit <- function(data,n_cs,opts) {

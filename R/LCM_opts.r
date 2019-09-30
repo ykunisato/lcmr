@@ -20,6 +20,7 @@
 #'   opts$K <- 10         (maximum number of latent causes)
 #'
 #' @return opts: fully specified options structure
+#' @export
 #'
 #' @examples
 #' # opts <- list()
