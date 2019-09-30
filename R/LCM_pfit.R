@@ -9,6 +9,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr unnest
 #' @importFrom furrr future_map
+#' @importFrom future plan
 #'
 #' @param data long format data containing the following variables
 #'        (Order and name is exactly the same as following):
