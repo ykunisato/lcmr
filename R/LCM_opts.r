@@ -7,7 +7,7 @@
 #'
 #'   Default values:
 #'
-#'   opts$M <- 100        (number of particles)
+#'   opts$M <- 100       (number of particles)
 #'
 #'   opts$a <- 1          (hyperparameter of beta prior: pseudo-count for feature presence)
 #'
@@ -23,12 +23,12 @@
 #'
 #' @examples
 #' # opts <- list()
-#' # opts$M <- 1000
+#' # opts$M <- 100
 #' # opts <- LCM_opts(opts)
 
 LCM_opts <- function(opts) {
     def_opts   <- list()
-    def_opts$M <- 100
+    def_opts$M <- 1000
     def_opts$a <- 1
     def_opts$b <- 1
     def_opts$c_alpha <-  0  # change parameter name form original
