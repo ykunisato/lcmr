@@ -24,8 +24,8 @@ LCM_lik <- function(alpha,data,n_cs,opts) {
   opts <- list()
   opts$c_alpha <- alpha
   # un particle filter
-  max_index_cs <- 3+n_cs
-  results <- LCM_infer(cbind(data$US,data[,4:max_index_cs]),opts)
+  max_index_cs <- 2+n_cs
+  results <- LCM_infer(cbind(data$US,data[,3:max_index_cs]),opts)
   # use linear regression to fit model output to CR
   N <- length(results$V)
   X <- results$V
