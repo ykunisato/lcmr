@@ -7,7 +7,7 @@
 #' @importFrom dplyr group_by
 #' @importFrom tidyr nest
 #' @importFrom dplyr mutate
-#' @importFrom tidyr unnest_wider
+#' @importFrom tidyr unnest
 #' @importFrom furrr future_map
 #'
 #' @param data long format data containing the following variables
@@ -54,7 +54,7 @@ LCM_pfit <- function(data,n_cs,opts,parallel=FALSE) {
     group_by(ID) %>%
     nest() %>%
     mutate(fit=future_map(data,~LCM_pfit_single(data=.,n_cs,opts,alpha))) %>%
-    unnest_wider(fit)
+    unnest(cols=fit)
   return(data)
 }
 
