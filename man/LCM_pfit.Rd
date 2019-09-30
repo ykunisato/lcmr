@@ -29,7 +29,7 @@ logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model)
 add to original data
 }
 \description{
-\code{LCM_fit} fit latent cause model to conditioning data using parallel computing
+\code{LCM_pfit} fit latent cause model to conditioning data using parallel computing
 }
 \examples{
 

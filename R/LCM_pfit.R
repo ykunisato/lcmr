@@ -1,6 +1,6 @@
 #' Fit latent cause model using parallel computing
 #'
-#' \code{LCM_fit} fit latent cause model to conditioning data using parallel computing
+#' \code{LCM_pfit} fit latent cause model to conditioning data using parallel computing
 #'
 #' @importFrom pracma linspace
 #' @importFrom magrittr %>%
