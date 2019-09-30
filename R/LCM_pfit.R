@@ -3,7 +3,6 @@
 #' \code{LCM_fit} fit latent cause model to conditioning data using parallel computing
 #'
 #' @importFrom pracma linspace
-#' @importFrom purrr map
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by
 #' @importFrom tidyr nest
