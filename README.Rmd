@@ -18,29 +18,67 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of lcmr is to ...
+The goal of lcmr is to fit latent cause model to conditioning data. 
+
+lcmr is an R package of [LCM]( https://github.com/sjgershm/LCM) made by[Sam Gershman](http://gershmanlab.webfactional.com/people.html).
+
 
 ## Installation
 
 You can install the development version from [GitHub](https://github.com/) with:
+
+(Now this is not working because this repository is private)
 
 ``` 
 # install.packages("devtools")
 devtools::install_github("ykunisato/lcmr")
 ```
 
+## How to use the lcmr
+### Prepare the data set
+
+The data must be prepared in the long format containing the following variables (The order and name of variables must be prepared in exactly the same as following):
+
+- ID : Put the participant ID in first column
+- CR : Put the Conditioned Response in the second column.
+- US : Put the Unconditioned Stimulus in the third column.
+- CS : Put the Conditioned Stimuli in the third and subsequent column. If using multiple CS, set variables name as CS1, CS2, CS3...
 
 
-```{r}
-######### Dependencies
-library(pracma)
+### List of functions
 
-# function already made
-#source("R/LCM_opts.r")
-#source("R/LCM_infer.r")
-#source("R/LCM_lik.r")
-#source("R/LCM_fit.r")
-#source("R/logsumexp.r")
+- LCM_fit( ): Fit latent cause model to conditioning data(main function)
+- LCM_infer( ): Conduct particle filtering or local maximum a posterior inference for latent cause model
+- LCM_lik( ): Compute log likelihood of data under the latent cause model
+- LCM_opts( ): Set option of latent cause model
+
+### How to use the LCM_fit
+
+You specify the following argument:
+
+- data: Use the data prepared above
+
+- n_cs: number of CS
+
+- opts: (optional) structure defining LCM options (see LCM_opts)
+
+If you want to define LCM options, you should set it as list format as following.
+
+```
+opts <- list()
+# For example, set the number of particles to 10 (default values is 100).
+opts$M <- 10
+```
+You can use the LCM_fit to estimate the post_mean_alpha (posterior mean alpha) and logBF (log Bayes factor for the alpha>=0 model relative to the alpha=0 model).
+
+```
+# If number of CS is 2, set as follows.
+n_cs <- 2
+results <- LCM_fit(data,n_cs,opts)
 ```
 
 
+
+## Bugs and question
+
+Please report on this repository's [issues](https://github.com/ykunisato/lcmr/issues)
