@@ -41,8 +41,6 @@ LCM_fit <- function(data,n_cs,opts) {
     cat('Participants',s, "\n")
     data_subset <- subset(data, ID==ID_list[s])
     lik <- vector()
-    b <- vector()
-    sd <- vector()
     for (i in 1:N) {
       results <- LCM_lik(alpha[i],data_subset,n_cs,opts)
       lik[i] <- results$lik
