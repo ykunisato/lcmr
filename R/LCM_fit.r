@@ -2,7 +2,7 @@
 #'
 #' \code{LCM_fit} fit latent cause model to conditioning data.
 #'
-#' @importFrom pracma histc
+#' @importFrom pracma linspace
 #'
 #' @param data long format data containing the following variables
 #'        (Order and name is exactly the same as following):
