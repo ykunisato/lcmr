@@ -10,7 +10,7 @@
 The goal of lcmr is to fit latent cause model to conditioning data.
 
 lcmr is an R package of [LCM](https://github.com/sjgershm/LCM) made
-by[Sam Gershman](http://gershmanlab.webfactional.com/people.html).
+by[Sam Gershman](http://gershmanlab.webfactional.com/people/sam.html).
 
 ## Installation
 
