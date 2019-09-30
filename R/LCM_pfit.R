@@ -88,7 +88,7 @@ LCM_pfit_single <- function(data,n_cs,opts,alpha) {
     L <- log(sum(exp(lik)))
     P <- exp(lik-L)
     post_mean_alpha <- alpha%*%P
-    logBF <- L - log(N) - lik[1]
+    logBF <- L - log(length(alpha)) - lik[1]
     df <- data.frame(post_mean_alpha, logBF)
     return(df)
 }
