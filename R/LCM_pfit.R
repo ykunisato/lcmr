@@ -5,8 +5,8 @@
 #' @importFrom pracma linspace
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by
-#' @importFrom tidyr nest
 #' @importFrom dplyr mutate
+#' @importFrom tidyr nest
 #' @importFrom tidyr unnest
 #' @importFrom furrr future_map
 #' @importFrom future plan
@@ -33,7 +33,7 @@
 #'
 #' # results <- LCM_pfit(data,n_cs,opts,parallel=TRUE)
 LCM_pfit <- function(data,n_cs,opts,parallel=FALSE) {
-  # argument
+  # check argument
   if (missing(opts)) {
     opts <- list()
   }
@@ -46,9 +46,9 @@ LCM_pfit <- function(data,n_cs,opts,parallel=FALSE) {
   alpha <- linspace(0,10,N)
   # parallel or single
   if(isTRUE(parallel) == 1){
-    plan(multiprocess)
+    plan("multisession")
   }else{
-    plan(sequential)
+    plan("sequential")
   }
   # fitting
   data <- data %>%
@@ -60,9 +60,9 @@ LCM_pfit <- function(data,n_cs,opts,parallel=FALSE) {
 }
 
 
-#' Fit latent cause model using parallel computing for single participant
+#' Function to fit latent cause model to data for parallel computing
 #'
-#' \code{LCM_fit} fit latent cause model to conditioning data using parallel computing
+#' \code{LCM_fit} is function to fit latent cause model to data for parallel computing
 #'
 #' @param data long format data containing the following variables
 #'        (Order and name is exactly the same as following):
@@ -77,9 +77,8 @@ LCM_pfit <- function(data,n_cs,opts,parallel=FALSE) {
 #' @param n_cs number of CS
 #' @param opts (optional) structure defining LCM options (see LCM_opts)
 #' @param alpha vector of alpha
-#' @return post_mean_alpha: posterior mean alpha
-#' @return logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
-#'
+#' @return df data frame containing post_mean_alpha(posterior mean alpha) and
+#' logBF(: )log Bayes factor for the alpha>=0 model relative to the alpha=0 model)
 LCM_pfit_single <- function(data,n_cs,opts,alpha) {
     lik <- vector()
     for (i in 1:length(alpha)) {
