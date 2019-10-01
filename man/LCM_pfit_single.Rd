@@ -2,7 +2,7 @@
 % Please edit documentation in R/LCM_pfit.R
 \name{LCM_pfit_single}
 \alias{LCM_pfit_single}
-\title{Fit latent cause model using parallel computing for single participant}
+\title{Function to fit latent cause model to data for parallel computing}
 \usage{
 LCM_pfit_single(data, n_cs, opts, alpha)
 }
@@ -24,10 +24,9 @@ LCM_pfit_single(data, n_cs, opts, alpha)
 \item{alpha}{vector of alpha}
 }
 \value{
-post_mean_alpha: posterior mean alpha
-
-logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+df data frame containing post_mean_alpha(posterior mean alpha) and
+logBF(: )log Bayes factor for the alpha>=0 model relative to the alpha=0 model)
 }
 \description{
-\code{LCM_fit} fit latent cause model to conditioning data using parallel computing
+\code{LCM_fit} is function to fit latent cause model to data for parallel computing
 }
