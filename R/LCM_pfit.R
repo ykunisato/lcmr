@@ -44,7 +44,7 @@ LCM_pfit <- function(data,n_cs,opts) {
   # set alpha (range=0~10, number is N)
   alpha <- linspace(0,10,N)
   # set parallel computing
-  plan(multisession)
+  plan("multisession")
   # fitting
   data <- data %>%
     group_by(ID) %>%
