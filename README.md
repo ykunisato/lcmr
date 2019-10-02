@@ -38,8 +38,9 @@ the same as following):
 
 ### List of functions
 
-  - LCM\_fit( ): Fit latent cause model to conditioning data(main
-    function)
+  - LCM\_fit( ): Fit latent cause model to conditioning data
+  - LCM\_pfit( ): Fit latent cause model to conditioning data using
+    parallel processing
   - LCM\_infer( ): Conduct particle filtering or local maximum a
     posterior inference for latent cause model
   - LCM\_lik( ): Compute log likelihood of data under the latent cause
@@ -70,6 +71,12 @@ to the alpha=0 model).
     # If number of CS is 2, set as follows.
     n_cs <- 2
     results <- LCM_fit(data,n_cs,opts)
+
+If you want to use parallel processing, you can use LCM\_pfit().
+LCM\_pfit() use the future\_map function from furrr packages for
+parallel processing.
+
+    results <- LCM_pfit(data,n_cs,opts)
 
 ## Bugs and question
 
