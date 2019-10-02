@@ -22,13 +22,14 @@ LCM_fit(data, n_cs, opts)
 \item{opts}{(optional) structure defining LCM options (see LCM_opts)}
 }
 \value{
-post_mean_alpha: posterior mean alpha
-
-logBF: log Bayes factor for the alpha>=0 model relative to the alpha=0 model
+data post_mean_alpha(posterior mean alpha) and
+logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model)
+add to original data
 }
 \description{
-\code{LCM_fit} fit latent cause model to conditioning data.
+\code{LCM_pfit} fit latent cause model to conditioning data
 }
 \examples{
-# results <- LCM_fit(data,n_cs,opts)
+
+# results <- LCM_pfit(data,n_cs,opts,parallel=TRUE)
 }

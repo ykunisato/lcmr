@@ -4,7 +4,7 @@
 \alias{LCM_pfit}
 \title{Fit latent cause model using parallel computing}
 \usage{
-LCM_pfit(data, n_cs, opts, parallel = FALSE)
+LCM_pfit(data, n_cs, opts)
 }
 \arguments{
 \item{data}{long format data containing the following variables
@@ -20,8 +20,6 @@ LCM_pfit(data, n_cs, opts, parallel = FALSE)
 \item{n_cs}{number of CS}
 
 \item{opts}{(optional) structure defining LCM options (see LCM_opts)}
-
-\item{parallel}{If set TRUE(default is FALSE), using parallel processing}
 }
 \value{
 data post_mean_alpha(posterior mean alpha) and
