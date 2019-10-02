@@ -49,7 +49,7 @@ LCM_pfit <- function(data,n_cs,opts) {
   data <- data %>%
     group_by(ID) %>%
     nest() %>%
-    mutate(fit=future_map(data,~LCM_pfit_single(data=.,n_cs,opts,alpha))) %>%
+    mutate(fit=future_map(data,~LCM_alpha(data=.,n_cs,opts,alpha))) %>%
     unnest(cols=fit)
   return(data)
 }
