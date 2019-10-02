@@ -7,6 +7,7 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom tidyr nest
+#' @importFrom purrr map
 #' @importFrom tidyr unnest
 #'
 #' @param data long format data containing the following variables

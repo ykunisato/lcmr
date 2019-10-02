@@ -10,4 +10,4 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-Imports: pracma, dplyr, furrr, magrittr, tidyr, future
+Imports: pracma, dplyr, furrr, magrittr, tidyr, future, purrr
