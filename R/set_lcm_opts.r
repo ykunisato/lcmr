@@ -29,7 +29,7 @@
 
 set_lcm_opts <- function(opts) {
     def_opts <- list()
-    def_opts$M <- 1000
+    def_opts$M <- 100
     def_opts$a <- 1
     def_opts$b <- 1
     def_opts$c_alpha <- 0  # change parameter name form original
