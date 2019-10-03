@@ -47,11 +47,11 @@ The data must be prepared in the long format containing the following variables 
 
 ### List of functions
 
-- LCM_fit( ): Fit latent cause model to conditioning data
-- LCM_pfit( ): Fit latent cause model to conditioning data using parallel processing
-- LCM_infer( ): Conduct particle filtering or local maximum a posterior inference for latent cause model
-- LCM_lik( ): Compute log likelihood of data under the latent cause model
-- LCM_opts( ): Set option of latent cause model
+- fit_data( ): Fit latent cause model to conditioning data
+- fit_data_parallel( ): Fit latent cause model to conditioning data using parallel processing
+- infer_latent_cause( ): Conduct particle filtering or local maximum a posterior inference for latent cause model
+- compute_loglik( ): Compute log likelihood of data under the latent cause model
+- set_lcm_opts( ): Set option of latent cause model
 
 ### How to use the LCM_fit
 
@@ -75,13 +75,13 @@ You can use the LCM_fit to estimate the post_mean_alpha (posterior mean alpha) a
 ```
 # If number of CS is 2, set as follows.
 n_cs <- 2
-results <- LCM_fit(data,n_cs,opts)
+results <- fit_data(data,n_cs,opts)
 ```
 
 If you want to use parallel processing, you can use LCM_pfit(). LCM_pfit() use the future_map function from furrr packages for parallel processing.
 
 ```
-results <- LCM_pfit(data,n_cs,opts)
+results <- fit_data_parallel(data,n_cs,opts)
 ```
 
 ## Bugs and question

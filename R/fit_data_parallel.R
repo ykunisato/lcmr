@@ -1,14 +1,15 @@
-#' Fit latent cause model
+#' Fit data to latent cause model using parallel computing
 #'
-#' \code{LCM_pfit} fit latent cause model to conditioning data
+#' \code{fit_data_parallel} fit latent cause model to conditioning data using parallel computing
 #'
 #' @importFrom pracma linspace
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom tidyr nest
-#' @importFrom purrr map
 #' @importFrom tidyr unnest
+#' @importFrom furrr future_map
+#' @importFrom future plan
 #'
 #' @param data long format data containing the following variables
 #'        (Order and name is exactly the same as following):
@@ -29,8 +30,8 @@
 #' @export
 #' @examples
 #'
-#' # results <- LCM_pfit(data,n_cs,opts,parallel=TRUE)
-LCM_fit <- function(data, n_cs, opts) {
+#' # results <- fit_data_parallel(data,n_cs,opts,parallel=TRUE)
+fit_data_parallel <- function(data, n_cs, opts) {
     # check argument
     if (missing(opts)) {
         opts <- list()
@@ -42,11 +43,13 @@ LCM_fit <- function(data, n_cs, opts) {
     N <- 50
     # set alpha (range=0~10, number is N)
     alpha <- linspace(0, 10, N)
+    # set parallel computing
+    plan("multisession")
     # fitting
     data <- data %>%
         group_by(ID) %>%
         nest() %>%
-        mutate(fit = map(data, ~LCM_alpha(data = ., n_cs, opts, alpha))) %>%
+        mutate(fit = future_map(data, ~estimate_alpha(data = ., n_cs, opts, alpha))) %>%
         unnest(cols = fit)
     return(data)
 }

@@ -1,6 +1,6 @@
-#' Set option
+#' Set LCM option
 #'
-#' \code{LCM_opts} set option of latent cause model.
+#' \code{set_lcm_opts} set option of latent cause model.
 #'
 #' @param opts (optional)options structure with a subset of fields specified.
 #'       All missing or empty fields will be set to default values.
@@ -25,9 +25,9 @@
 #' @examples
 #' # opts <- list()
 #' # opts$M <- 100
-#' # opts <- LCM_opts(opts)
+#' # opts <- set_lcm_opts(opts)
 
-LCM_opts <- function(opts) {
+set_lcm_opts <- function(opts) {
     def_opts <- list()
     def_opts$M <- 1000
     def_opts$a <- 1
@@ -35,7 +35,7 @@ LCM_opts <- function(opts) {
     def_opts$c_alpha <- 0  # change parameter name form original
     def_opts$stickiness <- 0
     def_opts$K <- 10
-    
+
     if (length(opts) == 0) {
         opts = def_opts
     } else {

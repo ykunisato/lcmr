@@ -1,6 +1,6 @@
 #' Particle filtering or local maximum a posteriori inference
 #'
-#' \code{LCM_infer} conduct Particle filtering or local maximum a posteriori inference
+#' \code{infer_latent_cause} conduct Particle filtering or local maximum a posteriori inference
 #' for latent cause model of associative learning
 #'
 #' @importFrom pracma histc
@@ -17,9 +17,9 @@
 #' K (the number of latent causes) is determined adaptively by the model.
 #' @export
 #' @examples
-#' # results <- LCM(X,opts)
+#' # results <- infer_latent_cause(X,opts)
 
-LCM_infer <- function(X, opts) {
+infer_latent_cause <- function(X, opts) {
     # set parameters
     results <- list()
     if (nargs() < 2) {
@@ -30,14 +30,14 @@ LCM_infer <- function(X, opts) {
     a <- opts$a
     b <- opts$b
     results$opts <- opts
-    
+
     # initialization
     if (opts$c_alpha == 0) {
         K <- 1
     } else {
         K <- opts$K
     }
-    
+
     post <- matrix(0, 1, K)
     post[1] <- 1
     # posterior probability of state(M=number of particles, K=number of state)
@@ -57,7 +57,7 @@ LCM_infer <- function(X, opts) {
     results$V <- matrix(0, T, 1)
     # number of particles
     z <- matrix(1, M, 1)
-    
+
     # loop over trials
     for (t in 1:T) {
         # calculate likelihood Set Mkd in stimulus on (particles*state*stim)
@@ -95,7 +95,7 @@ LCM_infer <- function(X, opts) {
             post <- prior * drop(prod_like_cs)
             # devide posterior rowsum of posterior(is mean prob of CS)
             post0 <- post/rowSums(post)
-            
+
             # posterior conditional on CS and US element-wise product of posterior of CS and
             # likelihood of US using supple 1st term of equation 11
             post <- post * drop(lik[, , 1])
@@ -110,7 +110,7 @@ LCM_infer <- function(X, opts) {
         pUS = drop(N[, , 1] + a)/(Nk + a + b)
         # product of posteriro of CS and likelihood of US is devided by number of particles
         results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS)/M
-        
+
         # sample new particles
         x1 <- X[t, ] == 1
         x0 <- X[t, ] == 0

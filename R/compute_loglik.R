@@ -1,6 +1,6 @@
 #' Compute log likelihood
 #'
-#' \code{LCM_lik} compute log likelihood of data under the latent cause model.
+#' \code{compute_loglik} compute log likelihood of data under the latent cause model.
 #'
 #' @param alpha concentration parameter
 #' @param data single-subject data
@@ -17,15 +17,15 @@
 #'               CR: predicted CR
 #' @export
 #' @examples
-#' # results <- LCM_lik(alpha,data,n_cs,opts)
+#' # results <- compute_loglik(alpha,data,n_cs,opts)
 
-LCM_lik <- function(alpha, data, n_cs, opts) {
+compute_loglik <- function(alpha, data, n_cs, opts) {
     # set concentration parameter
     opts <- list()
     opts$c_alpha <- alpha
     # un particle filter
     max_index_cs <- 2 + n_cs
-    results <- LCM_infer(cbind(data$US, data[, 3:max_index_cs]), opts)
+    results <- infer_latent_cause(cbind(data$US, data[, 3:max_index_cs]), opts)
     # use linear regression to fit model output to CR
     N <- length(results$V)
     X <- results$V
