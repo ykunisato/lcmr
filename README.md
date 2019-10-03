@@ -72,7 +72,7 @@ You can make simulation data using the following code.
     # Set hypothetical stimuli
     # Conditioning trail: 18 trial
     # Extinction trial: 12 trial
-    # CS: two CSs(CS1=CS+, CS2=CS-)
+    # CS: Two CSs(CS1=CS+, CS2=CS-)
     US  <- c(1,0,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0, 0,0,0,0,0,0,0,0,0,0,0,0)
     CS1 <- c(1,0,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0, 1,1,0,1,0,0,1,0,1,1,0,0)
     CS2 <- c(0,1,1,0,0,1,0,1,0,0,1,1,0,1,1,0,0,1, 0,0,1,0,1,1,0,1,0,0,1,1)
