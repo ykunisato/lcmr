@@ -25,7 +25,7 @@ infer_latent_cause <- function(X, opts) {
     if (nargs() < 2) {
         opts <- NULL
     }
-    opts <- LCM_opts(opts)
+    opts <- set_lcm_opts(opts)
     M <- opts$M
     a <- opts$a
     b <- opts$b
