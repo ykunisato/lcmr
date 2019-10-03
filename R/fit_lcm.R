@@ -1,6 +1,6 @@
-#' Fit latent cause model
+#' Fit data to latent cause model
 #'
-#' \code{LCM_pfit} fit latent cause model to conditioning data
+#' \code{fit_lcm} fit latent cause model to conditioning data
 #'
 #' @importFrom pracma linspace
 #' @importFrom magrittr %>%
@@ -29,24 +29,24 @@
 #' @export
 #' @examples
 #'
-#' # results <- LCM_pfit(data,n_cs,opts,parallel=TRUE)
-LCM_fit <- function(data,n_cs,opts) {
-  # check argument
-  if (missing(opts)) {
-    opts <- list()
-  }
-  if (missing(n_cs)) {
-    warning("Please set the n_cs(number of CS)")
-  }
-  # number of alpha values to evaluate
-  N <- 50
-  # set alpha (range=0~10, number is N)
-  alpha <- linspace(0,10,N)
-  # fitting
-  data <- data %>%
-    group_by(ID) %>%
-    nest() %>%
-    mutate(fit=map(data,~LCM_alpha(data=.,n_cs,opts,alpha))) %>%
-    unnest(cols=fit)
-  return(data)
+#' # results <- fit_lcm(data,n_cs,opts,parallel=TRUE)
+fit_lcm <- function(data, n_cs, opts) {
+    # check argument
+    if (missing(opts)) {
+        opts <- list()
+    }
+    if (missing(n_cs)) {
+        warning("Please set the n_cs(number of CS)")
+    }
+    # number of alpha values to evaluate
+    N <- 50
+    # set alpha (range=0~10, number is N)
+    alpha <- linspace(0, 10, N)
+    # fitting
+    data <- data %>%
+        group_by(ID) %>%
+        nest() %>%
+        mutate(fit = map(data, ~estimate_lcm_a(data = ., n_cs, opts, alpha))) %>%
+        unnest(cols = fit)
+    return(data)
 }

@@ -38,14 +38,15 @@ the same as following):
 
 ### List of functions
 
-  - LCM\_fit( ): Fit latent cause model to conditioning data
-  - LCM\_pfit( ): Fit latent cause model to conditioning data using
-    parallel processing
-  - LCM\_infer( ): Conduct particle filtering or local maximum a
-    posterior inference for latent cause model
-  - LCM\_lik( ): Compute log likelihood of data under the latent cause
-    model
-  - LCM\_opts( ): Set option of latent cause model
+  - fit\_lcm( ): Fit latent cause model to conditioning data
+  - fit\_lcm\_parallel( ): Fit latent cause model to conditioning data
+    using parallel processing
+  - infer\_latent\_cause( ): Conduct particle filtering or local maximum
+    a posterior inference for latent cause model
+  - estimate\_lcm\_a() Estimate alpha and logBF
+  - compute\_lcm\_loglik( ): Compute log likelihood of data under the
+    latent cause model
+  - set\_lcm\_opts( ): Set option of latent cause model
 
 ### How to use the LCM\_fit
 
@@ -70,13 +71,13 @@ to the alpha=0 model).
 
     # If number of CS is 2, set as follows.
     n_cs <- 2
-    results <- LCM_fit(data,n_cs,opts)
+    results <- fit_lcm(data,n_cs,opts)
 
 If you want to use parallel processing, you can use LCM\_pfit().
 LCM\_pfit() use the future\_map function from furrr packages for
 parallel processing.
 
-    results <- LCM_pfit(data,n_cs,opts)
+    results <- fit_lcm_parallel(data,n_cs,opts)
 
 ## Bugs and question
 
