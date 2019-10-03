@@ -31,25 +31,22 @@
 #' @examples
 #'
 #' # results <- LCM_pfit(data,n_cs,opts,parallel=TRUE)
-LCM_pfit <- function(data,n_cs,opts) {
-  # check argument
-  if (missing(opts)) {
-    opts <- list()
-  }
-  if (missing(n_cs)) {
-    warning("Please set the n_cs(number of CS)")
-  }
-  # number of alpha values to evaluate
-  N <- 50
-  # set alpha (range=0~10, number is N)
-  alpha <- linspace(0,10,N)
-  # set parallel computing
-  plan("multisession")
-  # fitting
-  data <- data %>%
-    group_by(ID) %>%
-    nest() %>%
-    mutate(fit=future_map(data,~LCM_alpha(data=.,n_cs,opts,alpha))) %>%
-    unnest(cols=fit)
-  return(data)
+LCM_pfit <- function(data, n_cs, opts) {
+    # check argument
+    if (missing(opts)) {
+        opts <- list()
+    }
+    if (missing(n_cs)) {
+        warning("Please set the n_cs(number of CS)")
+    }
+    # number of alpha values to evaluate
+    N <- 50
+    # set alpha (range=0~10, number is N)
+    alpha <- linspace(0, 10, N)
+    # set parallel computing
+    plan("multisession")
+    # fitting
+    data <- data %>% group_by(ID) %>% nest() %>% mutate(fit = future_map(data, ~LCM_alpha(data = ., 
+        n_cs, opts, alpha))) %>% unnest(cols = fit)
+    return(data)
 }
