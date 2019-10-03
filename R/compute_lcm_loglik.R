@@ -1,6 +1,6 @@
 #' Compute log likelihood
 #'
-#' \code{compute_loglik} compute log likelihood of data under the latent cause model.
+#' \code{compute_lcm_loglik} compute log likelihood of data under the latent cause model.
 #'
 #' @param alpha concentration parameter
 #' @param data single-subject data
@@ -17,9 +17,9 @@
 #'               CR: predicted CR
 #' @export
 #' @examples
-#' # results <- compute_loglik(alpha,data,n_cs,opts)
+#' # results <- compute_lcm_loglik(alpha,data,n_cs,opts)
 
-compute_loglik <- function(alpha, data, n_cs, opts) {
+compute_lcm_loglik <- function(alpha, data, n_cs, opts) {
     # set concentration parameter
     opts <- list()
     opts$c_alpha <- alpha
