@@ -67,9 +67,8 @@ You specify the following argument:
 If you want to define LCM options, you should set it as list format as following.
 
 ```
-opts <- list()
-# For example, set the number of particles to 10 (default values is 100).
-opts$M <- 10
+# For example, set the number of particles to 1000 (default values is 100).
+opts <- list(M=1000)
 ```
 
 You can make simulation data using the following code.
