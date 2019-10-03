@@ -65,6 +65,29 @@ following.
     # For example, set the number of particles to 10 (default values is 100).
     opts$M <- 10
 
+You can make simulation data using the following code.
+
+    # Set number of participants
+    number_of_perticiapnts <- 4
+    
+    # Set hypothetical stimuli
+    # Conditioning trail: 18 trial
+    # Extinction trial: 12 trial
+    # CS: two CSs(CS1=CS+, CS2=CS-)
+    US  <- c(1,0,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0, 0,0,0,0,0,0,0,0,0,0,0,0)
+    CS1 <- c(1,0,0,1,1,0,1,0,1,1,0,0,1,0,0,1,1,0, 1,1,0,1,0,0,1,0,1,1,0,0)
+    CS2 <- c(0,1,1,0,0,1,0,1,0,0,1,1,0,1,1,0,0,1, 0,0,1,0,1,1,0,1,0,0,1,1)
+    
+    # Make simulation dataset using infer_latent_cause
+    participants_alpha <- runif(number_of_perticiapnts, 0, 10)
+    data <- NULL
+    for (i in 1:number_of_perticiapnts) {
+      opts <- list(alpha=participants_alpha[i])
+      sim_data <- infer_latent_cause(cbind(US,CS1,CS2),opts)
+      sim_df <- data.frame(ID=rep(i,length(US)),CR=sim_data$V,US=US,CS1=CS1,CS2=CS2)
+      data <- rbind(data,sim_df)
+    }
+
 You can use the LCM\_fit to estimate the post\_mean\_alpha (posterior
 mean alpha) and logBF (log Bayes factor for the alpha\>=0 model relative
 to the alpha=0 model).
