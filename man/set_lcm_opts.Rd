@@ -18,7 +18,7 @@ opts$a <- 1          (hyperparameter of beta prior: pseudo-count for feature pre
 
 opts$b <- 1          (hyperparameter of beta prior: pseudo-count for feature absence)
 
-opts$alpha <- 0      (concentration parameter for Chinese restaurant process prior)
+opts$c_alpha <- 0      (concentration parameter for Chinese restaurant process prior)
 
 opts$stickiness <- 0 (stickiness parameer for Chinese restaurant process prior)
 
