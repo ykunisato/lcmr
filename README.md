@@ -56,7 +56,13 @@ You specify the following argument:
 
   - n\_cs: number of CS
 
-  - opts: (optional) structure defining LCM options (see LCM\_opts)
+  - opts: (optional) LCM options (see LCM\_opts)
+
+  - set\_alpha: (optional) option of alpha values to evaluate. You can
+    change max value and numbers of alpha as followings(default: max
+    value = 10, number = 50).
+
+list(num\_alpha = 100, max\_alpha = 5)
 
 If you want to define LCM options, you should set it as list format as
 following.
