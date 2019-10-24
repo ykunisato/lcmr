@@ -55,7 +55,7 @@ fit_lcm_parallel <- function(data, n_cs, opts, set_alpha) {
     # set parallel computing
     plan("multisession")
     # fitting
-    data <- data %>%
+    fit <- data %>%
         group_by(ID) %>%
         nest() %>%
         mutate(fit = future_map(data, ~estimate_lcm_a(data = ., n_cs, opts, alpha))) %>%
