@@ -20,9 +20,12 @@
 #'
 #'        US  Unconditioned Stimulus
 #'
-#'        CS  Conditioned Stimului. If using multiple CS, set variables name as CS1,CS2,CS3...
+#'        CS  Conditioned Stimului. If you use a multiple CS, set variables name as CS1,CS2,CS3...
 #' @param n_cs number of CS
-#' @param opts (optional) structure defining LCM options (see LCM_opts)
+#' @param opts (optional) LCM options (see LCM_opts)
+#' @param set_alpha (optional) option of alpha values to evaluate.
+#'        You can change max value and numbers of alpha as followings(default: max value = 10, number = 50).
+#'        list(num_alpha = 100, max_alpha = 5)
 #'
 #' @return data post_mean_alpha(posterior mean alpha) and
 #' logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model)
@@ -30,8 +33,8 @@
 #' @export
 #' @examples
 #'
-#' # results <- fit_lcm_parallel(data,n_cs,opts,parallel=TRUE)
-fit_lcm_parallel <- function(data, n_cs, opts) {
+#' # results <- fit_lcm_parallel(data,n_cs,opts,list(num_alpha = 100, max_alpha = 10))
+fit_lcm_parallel <- function(data, n_cs, opts, set_alpha) {
     # check argument
     if (missing(opts)) {
         opts <- list()
@@ -39,10 +42,14 @@ fit_lcm_parallel <- function(data, n_cs, opts) {
     if (missing(n_cs)) {
         warning("Please set the n_cs(number of CS)")
     }
-    # number of alpha values to evaluate
-    N <- 50
-    # set alpha (range=0~10, number is N)
-    alpha <- linspace(0, 10, N)
+    if (missing(set_alpha)) {
+        # set default alpha to evaluate
+        alpha <- linspace(0, 10, 50)
+    }else{
+        # set user defined alpha to evaluate
+        alpha <- linspace(0, set_alpha$max_alpha, set_alpha$num_alpha)
+    }
+
     # set parallel computing
     plan("multisession")
     # fitting

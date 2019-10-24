@@ -4,7 +4,7 @@
 \alias{fit_lcm_parallel}
 \title{Fit data to latent cause model using parallel computing}
 \usage{
-fit_lcm_parallel(data, n_cs, opts)
+fit_lcm_parallel(data, n_cs, opts, set_alpha)
 }
 \arguments{
 \item{data}{long format data containing the following variables
@@ -14,12 +14,16 @@ fit_lcm_parallel(data, n_cs, opts)
 
    US  Unconditioned Stimulus
 
-   CS  Conditioned Stimului. If using multiple CS, set variables name as CS1,CS2,CS3...
+   CS  Conditioned Stimului. If you use a multiple CS, set variables name as CS1,CS2,CS3...
 }}
 
 \item{n_cs}{number of CS}
 
-\item{opts}{(optional) structure defining LCM options (see LCM_opts)}
+\item{opts}{(optional) LCM options (see LCM_opts)}
+
+\item{set_alpha}{(optional) option of alpha values to evaluate.
+You can change max value and numbers of alpha as followings(default: max value = 10, number = 50).
+list(num_alpha = 100, max_alpha = 5)}
 }
 \value{
 data post_mean_alpha(posterior mean alpha) and
@@ -31,5 +35,5 @@ add to original data
 }
 \examples{
 
-# results <- fit_lcm_parallel(data,n_cs,opts,parallel=TRUE)
+# results <- fit_lcm_parallel(data,n_cs,opts,list(num_alpha = 100, max_alpha = 10))
 }
