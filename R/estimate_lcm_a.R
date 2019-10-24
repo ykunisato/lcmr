@@ -1,13 +1,15 @@
 #' Estimate alpha and logBF
 #'
 #' \code{estimate_lcm_a} is function to estimate alpha and logBF
+#' @importFrom tidyr nest
 #'
 #' @param data data from LCM_pfit
 #' @param n_cs number of CS
 #' @param opts (optional) structure defining LCM options (see LCM_opts)
 #' @param alpha vector of alpha
-#' @return df data frame containing post_mean_alpha(posterior mean alpha) and
-#' logBF(: )log Bayes factor for the alpha>=0 model relative to the alpha=0 model)
+#' @return df data frame containing post_mean_alpha(posterior mean alpha),
+#' logBF(log Bayes factor for the alpha>=0 model relative to the alpha=0 model),
+#' loglikelihood and probability each alpha.
 estimate_lcm_a <- function(data, n_cs, opts, alpha) {
     lik <- numeric(length(alpha))
     for (i in 1:length(alpha)) {
@@ -18,6 +20,9 @@ estimate_lcm_a <- function(data, n_cs, opts, alpha) {
     P <- exp(lik - L)
     post_mean_alpha <- alpha %*% P
     logBF <- L - log(length(alpha)) - lik[1]
-    df <- data.frame(post_mean_alpha, logBF)
+    df <- data.frame(post_mean_alpha,
+                     logBF,
+                     data.frame(alpha,lik,P))%>%
+          nest(prob_alpha=c(alpha,lik,P))
     return(df)
 }

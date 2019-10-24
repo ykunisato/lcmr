@@ -26,9 +26,11 @@
 #'        You can change max value and numbers of alpha as followings(default: max value = 10, number = 50).
 #'        list(num_alpha = 100, max_alpha = 5)
 #'
-#' @return data post_mean_alpha(posterior mean alpha) and
-#' logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model)
-#' add to original data
+#' @return return the fit, parameters and plc_vcr.
+#' fit is fitting results. parameters is parameters estmated including post_mean_alpha(posterior mean alpha) and
+#' logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model).
+#' plc_vcr is matrix of latent cause posterior and V & CR predicted.
+#'
 #' @export
 #' @examples
 #'
@@ -49,10 +51,30 @@ fit_lcm <- function(data, n_cs, opts, set_alpha) {
         alpha <- linspace(0, set_alpha$max_alpha, set_alpha$num_alpha)
     }
     # fitting
-    data <- data %>%
+    fit <- data %>%
         group_by(ID) %>%
         nest() %>%
         mutate(fit = map(data, ~estimate_lcm_a(data = ., n_cs, opts, alpha))) %>%
         unnest(cols = fit)
-    return(data)
+    # extract matrix of latent cause posterior and V & CR predicted
+    b <- NULL
+    sd <- NULL
+    plc_vcr <- NULL
+
+    for (i in 1:length(fit$ID)) {
+        estimate <- compute_lcm_loglik(fit$post_mean_alpha[i], fit$data[[i]], n_cs, opts)
+        b[i] <- estimate$latents$b
+        sd[i] <- estimate$latents$sd
+        plc_vcr <-rbind(plc_vcr, data.frame(ID = rep(fit$ID[i],length(estimate$latents$results$V)),
+                             v =estimate$latents$results$V,
+                             cr = estimate$latents$CR,
+                             estimate$latents$results$post))
+    }
+
+    parameters <- data.frame(ID = fit$ID,
+                             post_mean_alpha = fit$post_mean_alpha,
+                             b = b,
+                             sd = sd)
+
+    return(list(fit = fit, parameters = parameters, plc_vcr = plc_vcr))
 }

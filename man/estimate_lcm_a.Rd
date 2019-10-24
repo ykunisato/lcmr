@@ -16,8 +16,9 @@ estimate_lcm_a(data, n_cs, opts, alpha)
 \item{alpha}{vector of alpha}
 }
 \value{
-df data frame containing post_mean_alpha(posterior mean alpha) and
-logBF(: )log Bayes factor for the alpha>=0 model relative to the alpha=0 model)
+df data frame containing post_mean_alpha(posterior mean alpha),
+logBF(log Bayes factor for the alpha>=0 model relative to the alpha=0 model),
+loglikelihood and probability each alpha.
 }
 \description{
 \code{estimate_lcm_a} is function to estimate alpha and logBF

@@ -92,7 +92,7 @@ CS2 <- c(0,1,1,0,0,1,0,1,0,0,1,1,0,1,1,0,0,1, 0,0,1,0,1,1,0,1,0,0,1,1)
 participants_alpha <- runif(number_of_perticiapnts, 0, 10)
 data <- NULL
 for (i in 1:number_of_perticiapnts) {
-  opts <- list(alpha=participants_alpha[i])
+  opts <- list(c_alpha=participants_alpha[i])
   sim_data <- infer_latent_cause(cbind(US,CS1,CS2),opts)
   sim_df <- data.frame(ID=rep(i,length(US)),CR=sim_data$V,US=US,CS1=CS1,CS2=CS2)
   data <- rbind(data,sim_df)
