@@ -79,5 +79,6 @@ fit_lcm_parallel <- function(data, n_cs, opts, set_alpha) {
                              post_mean_alpha = fit$post_mean_alpha,
                              b = b,
                              sd = sd)
+
     return(list(fit = fit, parameters = parameters, plc_vcr = plc_vcr))
 }
