@@ -26,9 +26,10 @@ You can change max value and numbers of alpha as followings(default: max value =
 list(num_alpha = 100, max_alpha = 5)}
 }
 \value{
-data post_mean_alpha(posterior mean alpha) and
-logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model)
-add to original data
+return the fit, parameters and plc_vcr.
+fit is fitting results. parameters is parameters estmated including post_mean_alpha(posterior mean alpha) and
+logBFlog(Bayes factor for the alpha>=0 model relative to the alpha=0 model).
+plc_vcr is matrix of latent cause posterior and V & CR predicted.
 }
 \description{
 \code{fit_lcm_parallel} fit latent cause model to conditioning data using parallel computing
