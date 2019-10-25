@@ -32,11 +32,11 @@ infer_latent_cause <- function(X, opts) {
     results$opts <- opts
 
     # initialization
-    if (opts$c_alpha == 0) {
-        K <- 1
-    } else {
-        K <- opts$K
-    }
+    #if (opts$c_alpha == 0) {
+    #    K <- 1
+    #} else {
+    #    K <- opts$K
+    #}
 
     post <- matrix(0, 1, K)
     post[1] <- 1
