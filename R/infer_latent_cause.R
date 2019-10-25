@@ -37,6 +37,7 @@ infer_latent_cause <- function(X, opts) {
     #} else {
     #    K <- opts$K
     #}
+    K <- opts$K
 
     post <- matrix(0, 1, K)
     post[1] <- 1
