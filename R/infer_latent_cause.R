@@ -126,6 +126,6 @@ infer_latent_cause <- function(X, opts) {
         B[, z, x0] <- B[, z, x0] + 1
     }
     # remove unused state
-    results$post <- results$post[, colMeans(results$post) != 0]
+    # results$post <- results$post[, colMeans(results$post) != 0]
     return(list(opts = opts, V = results$V, post = results$post))
 }
