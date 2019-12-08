@@ -32,12 +32,11 @@ infer_latent_cause <- function(X, opts) {
     results$opts <- opts
 
     # initialization
-    #if (opts$c_alpha == 0) {
-    #    K <- 1
-    #} else {
-    #    K <- opts$K
-    #}
-    K <- opts$K
+    if (opts$c_alpha == 0) {
+        K <- 1
+    } else {
+        K <- opts$K
+    }
 
     post <- matrix(0, 1, K)
     post[1] <- 1
@@ -122,9 +121,11 @@ infer_latent_cause <- function(X, opts) {
             # multinomial sample
             z <- histc(runif(M, 0, 1), c(0, cumsum(post)))$bin
         }
-        Nk[, z] <- Nk[, z] + 1
-        N[, z, x1] <- N[, z, x1] + 1
-        B[, z, x0] <- B[, z, x0] + 1
+        for (m in 1:M) {
+            Nk[m, z[m]] <- Nk[m, z[m]] + 1
+            N[m, z[m], x1] <- N[m, z[m], x1] + 1
+            B[m, z[m], x0] <- B[m, z[m], x0] + 1
+        }
     }
     # remove unused state
     # results$post <- results$post[, colMeans(results$post) != 0]
