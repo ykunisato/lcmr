@@ -94,7 +94,7 @@ infer_latent_cause <- function(X, opts) {
                 }
             }
             post <- prior * drop(prod_like_cs)
-            # devide posterior rowsum of posterior(is mean prob of CS)
+            # divide posterior rowsum of posterior(is mean prob of CS)
             post0 <- post/rowSums(post)
 
             # posterior conditional on CS and US element-wise product of posterior of CS and
