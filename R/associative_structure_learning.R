@@ -54,7 +54,9 @@ learn_associative_structure <- function(X, time, opts_asl){
   # Initialization
   results <- NULL
   T <- nrow(X)
-  D <- ncol(X) -1 #ecluding US
+  r <- X[,1]         #us
+  X <- X[,2:ncol(X)] # cues
+  D <- ncol(X)
   if(length(opts_asl$c_alpha)==1){
     opts_asl$c_alpha <-opts_asl$c_alpha*matrix(1,T,1)
   }
@@ -73,7 +75,68 @@ learn_associative_structure <- function(X, time, opts_asl){
       Dist[i,j] = abs(time[i]-time[j])
     }
   }
-  S <- Dist^(-opts_asl$g);
+  S <- Dist^(-opts_asl$g)
 
-  return(list(opts_asl = opts_asl, Dist = Dist))
+
+  # Run inference
+  for (t in 1:T) {
+    # determine how many EM iterations to perform based on ITI
+    if(t == T){
+      nIter <- 1
+    }else{
+      nIter <- min(opts_asl$maxIter,round(Dist[t,t+1]))
+    }
+
+    ##########################################################################################
+    ######### not working from here
+    ##########################################################################################
+
+    # calculate (unnormalized) posterior, not including reward
+    N <- sum(Z[1:t-1,])                    #cluster counts
+    prior <- t(S[1:t-1,t])*Z[1:t-1,]          # ddCRP prior
+    prior(find(N==0,1)) = opts_asl$c_alpha(t)    # probability of new cluster
+    L <- prior/sum(prior)                  # normalize prior
+    xsum <- t(X[1:t-1,])*Z[1:t-1,]           # [D x K] matrix of feature sums
+    nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
+
+    for (d in 1:D) {
+      xhat <-  xsum[d,]/(N+opts_asl$sx)
+      L <-  L.*normpdf(X[t,d],xhat,sqrt(nu))  # likelihood
+    }
+
+    # reward prediction, before feedback
+    post <- L/sum(L)
+    results$V[t] <- (X[t,]*W)*t(post)
+    results$w <- W
+    results$p = post
+    if(is.nan(opts_asl$theta)){
+      results$V(t) = 1-normcdf(opts_asl$theta,results$V(t),opts_asl$lambda);
+    }
+    # loop over EM iterations
+    for (iter in 1:nIter){
+      V <- X[t,]*W;                               # reward prediction
+      post <- L.*normpdf(r(t),V,sqrt(opts_asl$sr))   # unnormalized posterior with reward
+      post <- post./sum(post)
+      results.Zp[t,] <- post
+      rpe <- repmat((r[t]-V)*post,D,1)           # reward prediction error
+      x <- repmat(t(X[t,]),1,opts_asl$K)
+      W <- W + opts_asl$eta(t)*x*rpe            # weight update
+      if (psi[t]>0){
+        W <- W*(1-repmat(post,D,1))*psi[t]
+      }
+
+      results$W[t,iter] = W
+      results$P[t,iter] = post
+    }
+  # cluster assignment
+  k <- max(post)                  # maximum a posteriori cluster assignment
+  Z[t,k] <- 1
+  }
+
+
+  # store results
+  results$Z <- Z
+  results$S <- S
+
+  return(list(opts_asl = opts_asl, Dist = Dist, results = results))
 }
