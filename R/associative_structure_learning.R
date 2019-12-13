@@ -78,7 +78,7 @@ learn_associative_structure <- function(X, time, opts_asl){
   S <- Dist^(-opts_asl$g)
 
 
-  # Run inference
+  ## Run inference
   for (t in 1:T) {
     # determine how many EM iterations to perform based on ITI
     if(t == T){
@@ -87,16 +87,29 @@ learn_associative_structure <- function(X, time, opts_asl){
       nIter <- min(opts_asl$maxIter,round(Dist[t,t+1]))
     }
 
+    ## calculate (unnormalized) posterior, not including reward
+    #cluster counts
+    if(t == 1){
+      N <- 0
+    }else{
+      N <- colSums(Z[1:t-1,])
+    }
+    # ddCRP prior
+    if(t == 1){
+      prior <- 0
+    }else{
+      prior <- S[1:t-1,t]*Z[1:t-1,]
+    }
+    # probability of new cluster
+    prior[,which(N == 0)] <- opts_asl$c_alpha[t]
+    # normalize prior
+    L <- prior/sum(prior)
+
     ##########################################################################################
     ######### not working from here
     ##########################################################################################
-
-    # calculate (unnormalized) posterior, not including reward
-    N <- sum(Z[1:t-1,])                    #cluster counts
-    prior <- t(S[1:t-1,t])*Z[1:t-1,]          # ddCRP prior
-    prior(find(N==0,1)) = opts_asl$c_alpha(t)    # probability of new cluster
-    L <- prior/sum(prior)                  # normalize prior
-    xsum <- t(X[1:t-1,])*Z[1:t-1,]           # [D x K] matrix of feature sums
+    # [D x K] matrix of feature sums
+    xsum <- t(X[1:t-1,])*Z[1:t-1,]
     nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
 
     for (d in 1:D) {
