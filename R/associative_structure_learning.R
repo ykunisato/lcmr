@@ -4,6 +4,7 @@
 #' for associative and structuallearning
 #'
 #' @importFrom pracma histc
+#' @importFrom pracma repmat
 #'
 #' @param X matrix of stimulus inputs(intensity) consisting of the number of trial rows and
 #' the number of stimulus features columns. The first feature (column 1) is the US,
@@ -77,9 +78,6 @@ learn_associative_structure <- function(X, time, opts_asl){
   }
   S <- Dist^(-opts_asl$g)
 
-
-  #############  Same as Matlab here
-
   ## Run inference
   for (t in 1:T) {
     # determine how many EM iterations to perform based on ITI
@@ -92,53 +90,61 @@ learn_associative_structure <- function(X, time, opts_asl){
     ## calculate (unnormalized) posterior, not including reward
     #cluster counts
     if(t == 1){
-      N <- 0
+      N <- matrix(0,1,opts_asl$K)
+    }else if(t == 2){
+      N <- Z[1,]
     }else{
       N <- colSums(Z[1:t-1,])
     }
     # ddCRP prior
     if(t == 1){
-      prior <- 0
+      prior <- matrix(0,1,opts_asl$K)
     }else{
-      prior <- S[1:t-1,t]*Z[1:t-1,]
+      prior <- S[1:t-1,t]%*%Z[1:t-1,]
     }
     # probability of new cluster
-    prior[,which(N == 0)] <- opts_asl$c_alpha[t]
+    prior[,which(prior == 0)][1] <- opts_asl$c_alpha[t]
     # normalize prior
     L <- prior/sum(prior)
-
     # [D x K] matrix of feature sums
-    xsum <- t(X[1:t-1,])*Z[1:t-1,]
+    if(t == 1){
+      xsum <- matrix(0,D,1)%*%matrix(0,1,opts_asl$K)
+    }else{
+      ##### not working
+      #####
+      xsum <- t(X[1:t-1,])%*%Z[1:t-1,]
+    }
     nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
-
     for (d in 1:D) {
       xhat <-  xsum[d,]/(N+opts_asl$sx)
-      L <-  L.*normpdf(X[t,d],xhat,sqrt(nu))  # likelihood
+      L <-  L*dnorm(X[t,d],xhat,sqrt(nu))  # likelihood
     }
-
     # reward prediction, before feedback
     post <- L/sum(L)
-    results$V[t] <- (X[t,]*W)*t(post)
+    results$V[t] <- (X[t,]%*%W)%*%t(post)
     results$w <- W
     results$p = post
-    if(is.nan(opts_asl$theta)){
-      results$V(t) = 1-normcdf(opts_asl$theta,results$V(t),opts_asl$lambda);
+    if(is.nan(opts_asl$theta)==0){
+      results$V[t] = 1-pnorm(opts_asl$theta,results$V[t],opts_asl$lambda);
     }
     # loop over EM iterations
     for (iter in 1:nIter){
-      V <- X[t,]*W;                               # reward prediction
-      post <- L.*normpdf(r(t),V,sqrt(opts_asl$sr))   # unnormalized posterior with reward
-      post <- post./sum(post)
-      results.Zp[t,] <- post
+      V <- X[t,]%*%W                               # reward prediction
+      post <- L*dnorm(r[t],V,sqrt(opts_asl$sr))   # unnormalized posterior with reward
+      post <- post/sum(post)
+      ##### not working
+      #####
+      # results$Zp[t,] <- as.vector(post)
       rpe <- repmat((r[t]-V)*post,D,1)           # reward prediction error
-      x <- repmat(t(X[t,]),1,opts_asl$K)
-      W <- W + opts_asl$eta(t)*x*rpe            # weight update
+      x <- repmat(matrix(X[t,]),1,opts_asl$K)
+      W <- W + opts_asl$eta[t]*x*rpe            # weight update
       if (psi[t]>0){
         W <- W*(1-repmat(post,D,1))*psi[t]
       }
-
-      results$W[t,iter] = W
-      results$P[t,iter] = post
+      ##### not working
+      #####
+      # results$W[t,iter] = W
+      # results$P[t,iter] = post
     }
   # cluster assignment
   k <- max(post)                  # maximum a posteriori cluster assignment
