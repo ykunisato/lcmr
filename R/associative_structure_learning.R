@@ -78,6 +78,8 @@ learn_associative_structure <- function(X, time, opts_asl){
   S <- Dist^(-opts_asl$g)
 
 
+  #############  Same as Matlab here
+
   ## Run inference
   for (t in 1:T) {
     # determine how many EM iterations to perform based on ITI
@@ -105,9 +107,6 @@ learn_associative_structure <- function(X, time, opts_asl){
     # normalize prior
     L <- prior/sum(prior)
 
-    ##########################################################################################
-    ######### not working from here
-    ##########################################################################################
     # [D x K] matrix of feature sums
     xsum <- t(X[1:t-1,])*Z[1:t-1,]
     nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
