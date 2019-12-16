@@ -11,6 +11,7 @@
 #' and the rest of the features (column 2 through D) are CSs.
 #' @param time vector of time(sec)
 #' @param opts_asl (optional)list containing various options.
+#' If you don't want to use  a nonlinear sigmoidal transformation, you set opts_asl$nst = 0.
 #' @return V: vector of conditioned response on each trial
 #' @return Zp: latent cause posterior before observing US(Trial*K)
 #' @return Z: latent cause posterior(Trial*K)
@@ -37,6 +38,7 @@ learn_associative_structure <- function(X, time, opts_asl){
   def_opts$theta <- 0.03
   def_opts$lambda <- 0.005
   def_opts$K <- 15
+  def_opts$nst <- 1
 
   if (nargs() < 3) {
     opts_asl <- NULL
@@ -57,6 +59,8 @@ learn_associative_structure <- function(X, time, opts_asl){
   zp_save <- NULL
   w_save <- NULL
   p_save <- NULL
+  w_before_r <- NULL
+  post_before_r <- NULL
   T <- nrow(X)
   r <- X[,1]         #us
   X <- X[,2:ncol(X)] # cues
@@ -125,10 +129,10 @@ learn_associative_structure <- function(X, time, opts_asl){
     # reward prediction, before feedback
     post <- L/sum(L)
     results$V[t] <- (X[t,]%*%W)%*%t(post)
-    results$w <- W
-    results$p = post
-    if(is.nan(opts_asl$theta)==0){
-      results$V[t] = 1-pnorm(opts_asl$theta,results$V[t],opts_asl$lambda);
+    w_before_r  <- rbind(w_before_r, W)
+    post_before_r  <- rbind(post_before_r, post)
+    if(opts_asl$nst==1){
+      results$V[t] <- 1-pnorm(opts_asl$theta,results$V[t],opts_asl$lambda);
     }
     # loop over EM iterations
     for (iter in 1:nIter){
@@ -150,7 +154,7 @@ learn_associative_structure <- function(X, time, opts_asl){
     zp_save <- rbind(zp_save,post)
 
   # cluster assignment
-  k <- max(post)                  # maximum a posteriori cluster assignment
+  k <- which.max(post)                 # maximum a posteriori cluster assignment
   Z[t,k] <- 1
   }
   # store results
@@ -159,5 +163,7 @@ learn_associative_structure <- function(X, time, opts_asl){
   results$Zp <- zp_save
   results$W = w_save
   results$P = p_save
+  results$w <- w_before_r
+  results$p <- post_before_r
   return(list(opts_asl = opts_asl, Dist = Dist, results = results))
 }
