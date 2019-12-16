@@ -54,6 +54,9 @@ learn_associative_structure <- function(X, time, opts_asl){
 
   # Initialization
   results <- NULL
+  zp_save <- NULL
+  w_save <- NULL
+  p_save <- NULL
   T <- nrow(X)
   r <- X[,1]         #us
   X <- X[,2:ncol(X)] # cues
@@ -109,9 +112,9 @@ learn_associative_structure <- function(X, time, opts_asl){
     # [D x K] matrix of feature sums
     if(t == 1){
       xsum <- matrix(0,D,1)%*%matrix(0,1,opts_asl$K)
+    }else if(t == 2){
+      xsum <- matrix(X[1,])%*%Z[1:t-1,]
     }else{
-      ##### not working
-      #####
       xsum <- t(X[1:t-1,])%*%Z[1:t-1,]
     }
     nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
@@ -132,29 +135,29 @@ learn_associative_structure <- function(X, time, opts_asl){
       V <- X[t,]%*%W                               # reward prediction
       post <- L*dnorm(r[t],V,sqrt(opts_asl$sr))   # unnormalized posterior with reward
       post <- post/sum(post)
-      ##### not working
-      #####
-      # results$Zp[t,] <- as.vector(post)
       rpe <- repmat((r[t]-V)*post,D,1)           # reward prediction error
       x <- repmat(matrix(X[t,]),1,opts_asl$K)
       W <- W + opts_asl$eta[t]*x*rpe            # weight update
       if (psi[t]>0){
         W <- W*(1-repmat(post,D,1))*psi[t]
       }
-      ##### not working
-      #####
-      # results$W[t,iter] = W
-      # results$P[t,iter] = post
+        post_save <- data.frame(t = rep(t,nrow(post)),iter = rep(iter,nrow(post)), post)
+        p_save <- rbind(p_save,post_save)
+        W2_save <- data.frame(t = rep(t,nrow(W)),iter = rep(iter,nrow(W)), W)
+        w_save <- rbind(w_save,W2_save)
     }
+    # save zp
+    zp_save <- rbind(zp_save,post)
+
   # cluster assignment
   k <- max(post)                  # maximum a posteriori cluster assignment
   Z[t,k] <- 1
   }
-
-
   # store results
   results$Z <- Z
   results$S <- S
-
+  results$Zp <- zp_save
+  results$W = w_save
+  results$P = p_save
   return(list(opts_asl = opts_asl, Dist = Dist, results = results))
 }
