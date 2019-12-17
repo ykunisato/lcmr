@@ -4,14 +4,10 @@
 \alias{learn_associative_structure}
 \title{Latent cause-modulated Rescorla-Wagner model}
 \usage{
-learn_associative_structure(X, time, opts_asl)
+learn_associative_structure(X, opts_asl)
 }
 \arguments{
-\item{X}{matrix of stimulus inputs(intensity) consisting of the number of trial rows and
-the number of stimulus features columns. The first feature (column 1) is the US,
-and the rest of the features (column 2 through D) are CSs.}
-
-\item{time}{vector of time(sec)}
+\item{X}{matrix cotaining time(stimulus onset, unit is sec), US, CS.}
 
 \item{opts_asl}{(optional)list containing various options.
 If you don't want to use  a nonlinear sigmoidal transformation, you set opts_asl$nst = 0.}
@@ -28,6 +24,6 @@ Z: latent cause posterior(Trial*K)
 for associative and structuallearning
 }
 \examples{
-# results <- ilearn_associative_structure(X, time, opts_asl)
+# results <- ilearn_associative_structure(X, opts_asl)
 
 }

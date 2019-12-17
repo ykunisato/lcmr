@@ -6,10 +6,7 @@
 #' @importFrom pracma histc
 #' @importFrom pracma repmat
 #'
-#' @param X matrix of stimulus inputs(intensity) consisting of the number of trial rows and
-#' the number of stimulus features columns. The first feature (column 1) is the US,
-#' and the rest of the features (column 2 through D) are CSs.
-#' @param time vector of time(sec)
+#' @param X matrix cotaining time(stimulus onset, unit is sec), US, CS.
 #' @param opts_asl (optional)list containing various options.
 #' If you don't want to use  a nonlinear sigmoidal transformation, you set opts_asl$nst = 0.
 #' @return V: vector of conditioned response on each trial
@@ -17,14 +14,9 @@
 #' @return Z: latent cause posterior(Trial*K)
 #' @export
 #' @examples
-#' # results <- ilearn_associative_structure(X, time, opts_asl)
+#' # results <- ilearn_associative_structure(X, opts_asl)
 #'
-learn_associative_structure <- function(X, time, opts_asl){
-  # warning
-  if (nargs() < 2) {
-    stop("please set the temporal distance")
-  }
-
+learn_associative_structure <- function(X, opts_asl){
   # set options
   def_opts <- list()
   def_opts$c_alpha <- 0.1
@@ -40,7 +32,7 @@ learn_associative_structure <- function(X, time, opts_asl){
   def_opts$K <- 15
   def_opts$nst <- 1
 
-  if (nargs() < 3) {
+  if (nargs() < 2) {
     opts_asl <- NULL
   }
   if (length(opts_asl) == 0) {
@@ -55,15 +47,16 @@ learn_associative_structure <- function(X, time, opts_asl){
   }
 
   # Initialization
-  results <- NULL
   zp_save <- NULL
   w_save <- NULL
   p_save <- NULL
   w_before_r <- NULL
   post_before_r <- NULL
+  X <- matrix(as.matrix(X), nrow(X), ncol(X))
   T <- nrow(X)
-  r <- X[,1]         #us
-  X <- X[,2:ncol(X)] # cues
+  time <- X[,1]      #Time
+  r <- X[,2]         #us
+  X <- X[,3:ncol(X)] # cues
   D <- ncol(X)
   if(length(opts_asl$c_alpha)==1){
     opts_asl$c_alpha <-opts_asl$c_alpha*matrix(1,T,1)
@@ -73,8 +66,8 @@ learn_associative_structure <- function(X, time, opts_asl){
   }
   psi <- opts_asl$psi*matrix(1,T,1)
   Z <- matrix(0,T,opts_asl$K)
-  results$V <- matrix(0,T,1)
-  W <- matrix(0,D,opts_asl$K) + opts_asl$w0;
+  V <- matrix(0,T,1)
+  W <- matrix(0,D,opts_asl$K) + opts_asl$w0
 
   # construct distance matrix
   Dist <- matrix(0,T,T)
@@ -103,23 +96,28 @@ learn_associative_structure <- function(X, time, opts_asl){
     }else{
       N <- colSums(Z[1:t-1,])
     }
-    # ddCRP prior
-    if(t == 1){
+
+    if(opts_asl$c_alpha[t]==0){
       prior <- matrix(0,1,opts_asl$K)
+      #always use cause1
+      prior[1] <- 1
     }else{
-      prior <- S[1:t-1,t]%*%Z[1:t-1,]
+      # ddCRP prior
+      if(t == 1){
+        prior <- matrix(0,1,opts_asl$K)
+      }else{
+        prior <- S[1:t-1,t]%*%Z[1:t-1,]
+      }
+      # probability of new cluster
+      prior[,which(prior == 0)][1] <- opts_asl$c_alpha[t]
     }
-    # probability of new cluster
-    prior[,which(prior == 0)][1] <- opts_asl$c_alpha[t]
     # normalize prior
     L <- prior/sum(prior)
     # [D x K] matrix of feature sums
     if(t == 1){
       xsum <- matrix(0,D,1)%*%matrix(0,1,opts_asl$K)
-    }else if(t == 2){
-      xsum <- matrix(X[1,])%*%Z[1:t-1,]
     }else{
-      xsum <- t(X[1:t-1,])%*%Z[1:t-1,]
+      xsum <- matrix(X[1:t-1,],D,t-1)%*%Z[1:t-1,]
     }
     nu <- opts_asl$sx/(N+opts_asl$sx) + opts_asl$sx
     for (d in 1:D) {
@@ -128,18 +126,18 @@ learn_associative_structure <- function(X, time, opts_asl){
     }
     # reward prediction, before feedback
     post <- L/sum(L)
-    results$V[t] <- (X[t,]%*%W)%*%t(post)
+    V[t] <- (X[t,]%*%W)%*%t(post)
     w_before_r  <- rbind(w_before_r, W)
     post_before_r  <- rbind(post_before_r, post)
     if(opts_asl$nst==1){
-      results$V[t] <- 1-pnorm(opts_asl$theta,results$V[t],opts_asl$lambda);
+      V[t] <- 1-pnorm(opts_asl$theta,V[t],opts_asl$lambda);
     }
     # loop over EM iterations
     for (iter in 1:nIter){
-      V <- X[t,]%*%W                               # reward prediction
-      post <- L*dnorm(r[t],V,sqrt(opts_asl$sr))   # unnormalized posterior with reward
+      V_afterUS <- X[t,]%*%W                               # reward prediction
+      post <- L*dnorm(r[t],V_afterUS,sqrt(opts_asl$sr))   # unnormalized posterior with reward
       post <- post/sum(post)
-      rpe <- repmat((r[t]-V)*post,D,1)           # reward prediction error
+      rpe <- repmat((r[t]-V_afterUS)*post,D,1)           # reward prediction error
       x <- repmat(matrix(X[t,]),1,opts_asl$K)
       W <- W + opts_asl$eta[t]*x*rpe            # weight update
       if (psi[t]>0){
@@ -157,13 +155,14 @@ learn_associative_structure <- function(X, time, opts_asl){
   k <- which.max(post)                 # maximum a posteriori cluster assignment
   Z[t,k] <- 1
   }
-  # store results
-  results$Z <- Z
-  results$S <- S
-  results$Zp <- zp_save
-  results$W = w_save
-  results$P = p_save
-  results$w <- w_before_r
-  results$p <- post_before_r
-  return(list(opts_asl = opts_asl, Dist = Dist, results = results))
+  return(list(opts_asl = opts_asl,
+              Dist = Dist,
+              V = V,
+              Z = Z,
+              S = S,
+              Zp = zp_save,
+              W = w_save,
+              P = p_save,
+              w = w_before_r,
+              p = post_before_r))
 }
