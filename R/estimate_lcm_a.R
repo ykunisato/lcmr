@@ -3,7 +3,7 @@
 #' \code{estimate_lcm_a} is function to estimate alpha and logBF
 #' @importFrom tidyr nest
 #'
-#' @param data data from LCM_pfit
+#' @param data data from fit_lcm or fit_lcm_parallel
 #' @param n_cs number of CS
 #' @param opts (optional) structure defining LCM options (see LCM_opts)
 #' @param alpha vector of alpha
