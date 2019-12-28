@@ -4,7 +4,7 @@
 \alias{fit_lcm}
 \title{Fit data to latent cause model}
 \usage{
-fit_lcm(data, n_cs, opts, set_alpha)
+fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
 }
 \arguments{
 \item{data}{long format data containing the following variables
@@ -14,16 +14,18 @@ fit_lcm(data, n_cs, opts, set_alpha)
 
    US  Unconditioned Stimulus
 
-   CS  Conditioned Stimului. If using multiple CS, set variables name as CS1,CS2,CS3...
+   CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
 }}
 
-\item{n_cs}{number of CS}
+\item{model}{1 = latent cause model, 2 = latent cause modulated RW model}
 
-\item{opts}{(optional) structure defining LCM options (see LCM_opts)}
+\item{opts}{(optional) structure defining ASL options}
 
-\item{set_alpha}{(optional) option of alpha values to evaluate.
-You can change max value and numbers of alpha as followings(default: max value = 10, number = 50).
-list(num_alpha = 100, max_alpha = 5)}
+\item{parameter_range}{(optional)  range of parameter(a_L, a_U, e_L, e_U)}
+
+\item{parallel}{(optional)  0 = single, 1 = parallel}
+
+\item{estimation_method}{(optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)}
 }
 \value{
 return the fit, parameters and plc_vcr.
@@ -36,5 +38,5 @@ plc_vcr is matrix of latent cause posterior and V & CR predicted.
 }
 \examples{
 
-# results <- fit_lcm(data,n_cs,opts,list(num_alpha = 100, max_alpha = 10))
+# results <- fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
 }
