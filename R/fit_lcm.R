@@ -146,16 +146,22 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
         }else{
             if(model==1){
                 estimate <- compute_loglike(fit$alpha[i], fit$data[[i]], model, opts)
+                b[i] <- estimate$latents$b
+                sd[i] <- estimate$latents$sd
+                plc_vcr <-rbind(plc_vcr, data.frame(ID = rep(fit$ID[i],length(estimate$latents$results$V)),
+                                                    v =estimate$latents$results$V,
+                                                    cr = estimate$latents$CR,
+                                                    estimate$latents$results$post))
+
             }else if(model==2){
                 estimate <- compute_loglike(c(fit$alpha[i],fit$eta[i]), fit$data[[i]], model, opts)
+                b[i] <- estimate$latents$b
+                sd[i] <- estimate$latents$sd
+                plc_vcr <-rbind(plc_vcr, data.frame(ID = rep(fit$ID[i],length(estimate$latents$results$V)),
+                                                    v =estimate$latents$results$V,
+                                                    cr = estimate$latents$CR,
+                                                    estimate$latents$results$Z))
             }
-
-            b[i] <- estimate$latents$b
-            sd[i] <- estimate$latents$sd
-            plc_vcr <-rbind(plc_vcr, data.frame(ID = rep(fit$ID[i],length(estimate$latents$results$V)),
-                             v =estimate$latents$results$V,
-                             cr = estimate$latents$CR,
-                             estimate$latents$results$Z))
         }
     }
     if(model==1){
