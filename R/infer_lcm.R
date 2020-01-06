@@ -178,7 +178,7 @@ infer_lcm_rw <- function(X, opts){
     def_opts$theta <- 0.03
     def_opts$lambda <- 0.005
     def_opts$K <- 15
-    def_opts$nst <- 1
+    def_opts$nst <- 0
 
     if (nargs() < 2) {
         opts <- NULL
