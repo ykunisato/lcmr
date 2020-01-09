@@ -7,7 +7,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr nest
 #' @importFrom purrr map
-#' @importFrom tidyr unnest
+#' @importFrom tidyr unnest_wider
 #' @importFrom furrr future_map
 #' @importFrom future plan
 #' @importFrom pracma linspace
@@ -22,6 +22,8 @@
 #'        US  Unconditioned Stimulus
 #'
 #'        CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+#'
+#'        If you want to use LCM-RW, you have to add time variable(stimulus onset, unit is sec) before US.
 #' @param model 1 = latent cause model, 2 = latent cause modulated RW model
 #' @param opts (optional) structure defining ASL options
 #' @param parameter_range (optional)  range of parameter(a_L, a_U, e_L, e_U)
@@ -251,5 +253,20 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
         }
         })
     }
-    return(list(alpha = param[1], eta = param[2], nll = smallest_nll))
+
+    if(length(param)==0){
+        if(model==1){
+            param[1] <- NA
+        }else if(model==2){
+            param[1] <- NA
+            param[2] <- NA
+        }
+    }
+
+    if(model==1){
+        return(list(alpha = param[1], nll = smallest_nll))
+    }else if(model==2){
+        return(list(alpha = param[1], eta = param[2], nll = smallest_nll))
+    }
+
 }

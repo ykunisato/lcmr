@@ -15,6 +15,8 @@ fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
    US  Unconditioned Stimulus
 
    CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+
+   If you want to use LCM-RW, you have to add time variable(stimulus onset, unit is sec) before US.
 }}
 
 \item{model}{1 = latent cause model, 2 = latent cause modulated RW model}
