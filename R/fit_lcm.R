@@ -232,6 +232,7 @@ estimate_by_post_mean <- function(data, model, opts, alpha) {
 #' @return estimated parameters, negative log likelihood
 estimate_by_optim <- function(data, model, opts, parameter_range) {
     smallest_nll <- Inf
+    param <- NULL
     cat("start estimation using optim... \n")
     for (i in 1:10) {
         #compute_negative_loglike(param, data, model, opts)
