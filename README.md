@@ -5,6 +5,11 @@
 
 <!-- badges: start -->
 
+[![](https://img.shields.io/badge/devel%20version-0.3.0-blue.svg)](https://github.com/ykunisato/lcmr)
+[![](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![CRAN
+checks](https://cranchecks.info/badges/summary/lcmr)](https://cran.r-project.org/web/checks/check_results_lcmr.html)
+[![](https://travis-ci.org/ykunisato/lcmr.svg?branch=master)](https://travis-ci.org/ykunisato/lcmr)
 <!-- badges: end -->
 
 The goal of lcmr is to simulate phenomena of classical conditioning and
