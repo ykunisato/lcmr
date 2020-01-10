@@ -144,7 +144,7 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
 
     for (i in 1:length(fit$ID)) {
         if(model == 1){
-            if(is.nan(fit$alpha[i])){
+            if(is.na(fit$alpha[i])){
 
             }else{
                 estimate <- compute_loglike(fit$alpha[i], fit$data[[i]], model, opts)
@@ -156,7 +156,7 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
                                                     estimate$latents$results$post))
             }
         }else if(model == 2){
-            if(is.nan(fit$alpha[i]) || is.nan(fit$eta[i])){
+            if(is.na(fit$alpha[i]) || is.nan(fit$eta[i])){
 
             }else{
                 estimate <- compute_loglike(c(fit$alpha[i],fit$eta[i]), fit$data[[i]], model, opts)
