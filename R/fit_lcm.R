@@ -143,11 +143,10 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
     plc_vcr <- NULL
 
     for (i in 1:length(fit$ID)) {
-        if(is.nan(fit$alpha[i])){
-            b[i] <- NaN
-            sd[i] <- NaN
-        }else{
-            if(model==1){
+        if(model == 1){
+            if(is.nan(fit$alpha[i])){
+
+            }else{
                 estimate <- compute_loglike(fit$alpha[i], fit$data[[i]], model, opts)
                 b[i] <- estimate$latents$b
                 sd[i] <- estimate$latents$sd
@@ -155,8 +154,11 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
                                                     v =estimate$latents$results$V,
                                                     cr = estimate$latents$CR,
                                                     estimate$latents$results$post))
+            }
+        }else if(model == 2){
+            if(is.nan(fit$alpha[i]) || is.nan(fit$eta[i])){
 
-            }else if(model==2){
+            }else{
                 estimate <- compute_loglike(c(fit$alpha[i],fit$eta[i]), fit$data[[i]], model, opts)
                 b[i] <- estimate$latents$b
                 sd[i] <- estimate$latents$sd

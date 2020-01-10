@@ -1,7 +1,7 @@
 Package: lcmr
 Type: Package
 Title: Model fitting using latent cause model
-Version: 0.3.0
+Version: 0.3.1
 Author: Yoshihiko Kunisato
 Maintainer: Yoshihiko Kunisato <ykunisato@gmail.com>
 Description: Model fitting using latent cause model.This function is developed by Sam Gershman as Matlab code(07/2016) and implemented as R code by Yoshiko Kunisato(09/2019)
