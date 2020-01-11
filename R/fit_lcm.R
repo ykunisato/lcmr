@@ -238,7 +238,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
     smallest_nll <- Inf
     param <- NULL
     cat("start estimation using optim... \n")
-    for (i in 1:10) {
+    for (i in 1:50) {
         #compute_negative_loglike(param, data, model, opts)
         init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
                         runif(1,parameter_range$e_L,parameter_range$e_U))
@@ -257,6 +257,14 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
             param <- results$par
         }
         })
+
+        if(i==20 && length(param)!=0){
+            break
+        }else if(i==30 && length(param)!=0){
+            break
+        }else if(i==40 && length(param)!=0){
+            break
+        }
     }
 
     if(length(param)==0){
