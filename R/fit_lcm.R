@@ -242,7 +242,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
         #compute_negative_loglike(param, data, model, opts)
         init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
                         runif(1,parameter_range$e_L,parameter_range$e_U))
-        try({
+        tryCatch({
         results <- optim(init_param,
                          compute_negative_loglike,
                          data = data, model = model, opts = opts,
@@ -256,7 +256,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
             smallest_nll <- results$value
             param <- results$par
         }
-        })
+        }, error = function(e) {cat(i," Error in estimation using optim")})
 
         if(i==20 && length(param)!=0){
             break
