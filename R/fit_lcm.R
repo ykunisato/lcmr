@@ -250,7 +250,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
                          lower = c(parameter_range$a_L,parameter_range$e_L),
                          upper = c(parameter_range$a_U,parameter_range$e_U))
 
-        cat("negative log likelihood: ",results$value)
+        cat(i," ","negative log likelihood: ",results$value)
         cat("  parameter: ",results$par,"\n")
         if(results$value < smallest_nll){
             smallest_nll <- results$value
