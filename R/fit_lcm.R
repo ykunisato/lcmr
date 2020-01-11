@@ -256,7 +256,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
             smallest_nll <- results$value
             param <- results$par
         }
-        }, error = function(e) {cat(i," Error in estimation using optim")})
+        }, error = function(e) {cat(i," Error in estimation using optim\n")})
 
         if(i==20 && length(param)!=0){
             break
