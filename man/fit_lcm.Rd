@@ -4,7 +4,7 @@
 \alias{fit_lcm}
 \title{Fit data to latent cause model}
 \usage{
-fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
+fit_lcm(data, model, opts, parameter_range, estimation_method)
 }
 \arguments{
 \item{data}{long format data containing the following variables
@@ -25,8 +25,6 @@ fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
 
 \item{parameter_range}{(optional)  range of parameter(a_L, a_U, e_L, e_U)}
 
-\item{parallel}{(optional)  0 = single, 1 = parallel}
-
 \item{estimation_method}{(optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)}
 }
 \value{
@@ -40,5 +38,5 @@ plc_vcr is matrix of latent cause posterior and V & CR predicted.
 }
 \examples{
 
-# results <- fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
+# results <- fit_lcm(data, model, opts, parameter_range, estimation_method)
 }

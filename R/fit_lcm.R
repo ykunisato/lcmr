@@ -6,7 +6,6 @@
 #' @importFrom dplyr group_by
 #' @importFrom dplyr mutate
 #' @importFrom tidyr nest
-#' @importFrom purrr map
 #' @importFrom tidyr unnest_wider
 #' @importFrom furrr future_map
 #' @importFrom future plan
@@ -27,7 +26,6 @@
 #' @param model 1 = latent cause model, 2 = latent cause modulated RW model
 #' @param opts (optional) structure defining ASL options
 #' @param parameter_range (optional)  range of parameter(a_L, a_U, e_L, e_U)
-#' @param parallel (optional)  0 = single, 1 = parallel
 #' @param estimation_method (optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)
 #'
 #' @return return the fit, parameters and plc_vcr.
@@ -38,8 +36,8 @@
 #' @export
 #' @examples
 #'
-#' # results <- fit_lcm(data, model, opts, parameter_range, parallel, estimation_method)
-fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_method){
+#' # results <- fit_lcm(data, model, opts, parameter_range, estimation_method)
+fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
     # check argument
     if (missing(data)) {
         stop("Please set the data")
@@ -49,9 +47,6 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
     }
     if (missing(opts)) {
         opts <- list()
-    }
-    if (missing(parallel)) {
-        parallel <- 0
     }
     if (missing(estimation_method)) {
         estimation_method <- 0
@@ -75,67 +70,41 @@ fit_lcm <- function(data, model, opts, parameter_range, parallel, estimation_met
     # fitting
     if(model == 1){
         if(estimation_method==0){
-            if(parallel==0){
-                fit  <- data %>%
-                    group_by(ID) %>%
-                    nest() %>%
-                    mutate(fit = map(data, ~optimize(compute_negative_loglike,
-                                                     interval = c(parameter_range$a_L, parameter_range$a_U),
-                                                     data = ., model = model, opts = opts))) %>%
-                    unnest_wider(fit) %>%
-                    rename(alpha=minimum,nll=objective)
-            }else if(parallel==1){
-                # set parallel computing
-                plan("multisession")
-                # fitting
-                fit <- data %>%
-                    group_by(ID) %>%
-                    nest() %>%
-                    mutate(fit = future_map(data, ~optimize(compute_negative_loglike,
-                                                            interval = c(parameter_range$a_L, parameter_range$a_U),
-                                                            data = ., model = model, opts = opts))) %>%
-                    unnest_wider(fit) %>%
-                    rename(alpha=minimum,nll=objective)
-            }
+            # set parallel computing
+            plan("future::multisession")
+            # fitting
+            fit <- data %>%
+                group_by(ID) %>%
+                nest() %>%
+                mutate(fit = future_map(data, ~optimize(compute_negative_loglike,
+                                                        interval = c(parameter_range$a_L, parameter_range$a_U),
+                                                        data = ., model = model, opts = opts),
+                                                        .progress = TRUE)) %>%
+                unnest_wider(fit) %>%
+                rename(alpha=minimum,nll=objective)
         }else if(estimation_method==1){
             alpha <- linspace(0, 10, 50)
-            if(parallel==0){
-                fit <- data %>%
-                    group_by(ID) %>%
-                    nest() %>%
-                    mutate(fit = map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
-                    unnest_wider(fit) %>%
-                    rename(alpha = post_mean_alpha)
-
-            }else if(parallel==1){
-                # set parallel computing
-                plan("multisession")
-                # fitting
-                fit <- data %>%
-                    group_by(ID) %>%
-                    nest() %>%
-                    mutate(fit = future_map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
-                    unnest_wider(fit) %>%
-                    rename(alpha = post_mean_alpha)
-            }
+            # set parallel computing
+            plan("future::multisession")
+            # fitting
+            fit <- data %>%
+                group_by(ID) %>%
+                nest() %>%
+                mutate(fit = future_map(data, ~estimate_by_post_mean(data = ., model, opts, alpha),
+                                        .progress = TRUE)) %>%
+                unnest_wider(fit) %>%
+                rename(alpha = post_mean_alpha)
         }
     }else if(model == 2){
-        if(parallel==0){
-            fit  <- data %>%
-                group_by(ID) %>%
-                nest() %>%
-                mutate(fit = map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
-                unnest_wider(fit)
-        }else if(parallel==1){
-            # set parallel computing
-            plan("multisession")
-            # fitting
-            fit  <- data %>%
-                group_by(ID) %>%
-                nest() %>%
-                mutate(fit = future_map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
-                unnest_wider(fit)
-        }
+        # set parallel computing
+        plan("future::multisession")
+        # fitting
+        fit  <- data %>%
+            group_by(ID) %>%
+            nest() %>%
+            mutate(fit = future_map(data, ~estimate_by_optim(data = ., model, opts, parameter_range)),
+                   .progress = TRUE) %>%
+            unnest_wider(fit)
     }
     # extract matrix of latent cause posterior and V & CR predicted
     b <- NULL
@@ -238,7 +207,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
     smallest_nll <- Inf
     param <- NULL
     cat("start estimation using optim... \n")
-    for (i in 1:50) {
+    for (i in 1:100) {
         #compute_negative_loglike(param, data, model, opts)
         init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
                         runif(1,parameter_range$e_L,parameter_range$e_U))
@@ -260,9 +229,17 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
 
         if(i==20 && length(param)!=0){
             break
-        }else if(i==30 && length(param)!=0){
-            break
         }else if(i==40 && length(param)!=0){
+            break
+        }else if(i==60 && length(param)!=0){
+            break
+        }else if(i==70 && length(param)!=0){
+            break
+        }else if(i==80 && length(param)!=0){
+            break
+        }else if(i==90 && length(param)!=0){
+            break
+        }else if(i==100 && length(param)!=0){
             break
         }
     }
