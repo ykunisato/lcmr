@@ -9,10 +9,21 @@ infer_lcm(X, opts)
 \arguments{
 \item{X}{matrix of stimulus inputs consisting of the number of trial rows and
 the number of stimulus features columns. The first feature (column 1) is the US,
-and the rest of the features (column 2 through D) are CSs.}
+and the rest of the features (column 2 through D) are CSs.\preformatted{   US  Unconditioned Stimulus
 
-\item{opts}{(optional)structure containing various options (see LCM_opts).
-Missing fields are set to defaults. If opts.M = 1, then the model computes a local MAP estimate.}
+   CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+}}
+
+\item{opts}{(optional)options used in inference\preformatted{a hyperparameter of beta prior(default = 1)
+
+b hyperparameter of beta prior(default = 1)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+
+stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+
+K maximum number of latent causes(default = 10)
+}}
 }
 \value{
 opts: options used in inference

@@ -7,10 +7,47 @@
 infer_lcm_rw(X, opts)
 }
 \arguments{
-\item{X}{matrix cotaining time(stimulus onset, unit is sec), US, CS.}
+\item{X}{matrix cotaining time, US, CSs.\preformatted{   time  stimulus onset, unit is sec
 
-\item{opts}{(optional)list containing various options.
-If you don't want to use  a nonlinear sigmoidal transformation, you set opts$nst = 0.}
+   US  Unconditioned Stimulus
+
+   CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+}}
+
+\item{opts}{(optional)options used in inference\preformatted{a hyperparameter of beta prior(default = 1)
+
+b hyperparameter of beta prior(default = 1)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+
+stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+
+K maximum number of latent causes(default = 10)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 0.1)
+
+g temporal scaling parameter(default = 1)
+
+psi [N x 1]binary vector specifying when protein synthesis inhibitor is injected(default = 0)
+
+eta learning rate(default = 0.2)
+
+maxIter maximum number of iterations between each trial(default = 3)
+
+w0 initial weight value(default = 0)
+
+sr US variance(default = 0.4)
+
+sx stimulus variance(default = 1)
+
+theta response threshold(default = 0.3)
+
+lambda response gain(default = 0.005)
+
+K maximum number of latent causes(default = 15)
+
+nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst = 0.(default = 0)
+}}
 }
 \value{
 V: vector of conditioned response on each trial

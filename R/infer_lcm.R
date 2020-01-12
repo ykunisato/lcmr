@@ -8,8 +8,23 @@
 #' @param X matrix of stimulus inputs consisting of the number of trial rows and
 #' the number of stimulus features columns. The first feature (column 1) is the US,
 #' and the rest of the features (column 2 through D) are CSs.
-#' @param opts (optional)structure containing various options (see LCM_opts).
-#' Missing fields are set to defaults. If opts.M = 1, then the model computes a local MAP estimate.
+#'
+#'        US  Unconditioned Stimulus
+#'
+#'        CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+#'
+#' @param opts (optional)options used in inference
+#'
+#'     a hyperparameter of beta prior(default = 1)
+#'
+#'     b hyperparameter of beta prior(default = 1)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+#'
+#'     stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+#'
+#'     K maximum number of latent causes(default = 10)
+#'
 #' @return opts: options used in inference
 #' @return V: US prediction each trial
 #' @return post: matrix of latent cause posterior consisting of the number of trial rows and
@@ -139,9 +154,50 @@ infer_lcm <- function(X, opts) {
 #' @importFrom pracma histc
 #' @importFrom pracma repmat
 #'
-#' @param X matrix cotaining time(stimulus onset, unit is sec), US, CS.
-#' @param opts (optional)list containing various options.
-#' If you don't want to use  a nonlinear sigmoidal transformation, you set opts$nst = 0.
+#' @param X matrix cotaining time, US, CSs.
+#'
+#'        time  stimulus onset, unit is sec
+#'
+#'        US  Unconditioned Stimulus
+#'
+#'        CS  Conditioned Stimului or Context. If using multiple CS, set variables name as CS1,CS2,CS3...
+#'
+#' @param opts (optional)options used in inference
+#'
+#'     a hyperparameter of beta prior(default = 1)
+#'
+#'     b hyperparameter of beta prior(default = 1)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+#'
+#'     stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+#'
+#'     K maximum number of latent causes(default = 10)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 0.1)
+#'
+#'     g temporal scaling parameter(default = 1)
+#'
+#'     psi [N x 1]binary vector specifying when protein synthesis inhibitor is injected(default = 0)
+#'
+#'     eta learning rate(default = 0.2)
+#'
+#'     maxIter maximum number of iterations between each trial(default = 3)
+#'
+#'     w0 initial weight value(default = 0)
+#'
+#'     sr US variance(default = 0.4)
+#'
+#'     sx stimulus variance(default = 1)
+#'
+#'     theta response threshold(default = 0.3)
+#'
+#'     lambda response gain(default = 0.005)
+#'
+#'     K maximum number of latent causes(default = 15)
+#'
+#'     nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst = 0.(default = 0)
+#'
 #' @return V: vector of conditioned response on each trial
 #' @return Zp: latent cause posterior before observing US(Trial*K)
 #' @return Z: latent cause posterior(Trial*K)
