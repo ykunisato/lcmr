@@ -78,8 +78,7 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
                 nest() %>%
                 mutate(fit = future_map(data, ~optimize(compute_negative_loglike,
                                                         interval = c(parameter_range$a_L, parameter_range$a_U),
-                                                        data = ., model = model, opts = opts),
-                                                        .progress = TRUE)) %>%
+                                                        data = ., model = model, opts = opts))) %>%
                 unnest_wider(fit) %>%
                 rename(alpha=minimum,nll=objective)
         }else if(estimation_method==1){
@@ -90,8 +89,7 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
             fit <- data %>%
                 group_by(ID) %>%
                 nest() %>%
-                mutate(fit = future_map(data, ~estimate_by_post_mean(data = ., model, opts, alpha),
-                                        .progress = TRUE)) %>%
+                mutate(fit = future_map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
                 unnest_wider(fit) %>%
                 rename(alpha = post_mean_alpha)
         }
@@ -102,8 +100,7 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
         fit  <- data %>%
             group_by(ID) %>%
             nest() %>%
-            mutate(fit = future_map(data, ~estimate_by_optim(data = ., model, opts, parameter_range)),
-                   .progress = TRUE) %>%
+            mutate(fit = future_map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
             unnest_wider(fit)
     }
     # extract matrix of latent cause posterior and V & CR predicted

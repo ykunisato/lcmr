@@ -22,10 +22,9 @@
 infer_lcm <- function(X, opts) {
     # set default options
     def_opts <- list()
-    def_opts$M <- 100
     def_opts$a <- 1
     def_opts$b <- 1
-    def_opts$c_alpha <- 0
+    def_opts$c_alpha <- 1
     def_opts$stickiness <- 0
     def_opts$K <- 10
     # set parameters
@@ -41,7 +40,6 @@ infer_lcm <- function(X, opts) {
         }
     }
 
-    M <- opts$M
     a <- opts$a
     b <- opts$b
     K <- opts$K
@@ -51,55 +49,51 @@ infer_lcm <- function(X, opts) {
     post <- matrix(0, 1, K)
     post[1] <- 1
     # posterior probability of state(M=number of particles, K=number of state)
-    post0 <- matrix(0, M, K)
+    post0 <- matrix(0, 1, K)
     post0[, 1] <- 1
     T <- nrow(X)
     D <- ncol(X)
     # feature-cause co-occurence counts(particle*state*stim) stimuli On
-    N <- array(0, dim = c(M, K, D))
+    N <- array(0, dim = c(K, D))
     # feature-cause co-occurence counts(particle*state*stim) stimuli off
-    B <- array(0, dim = c(M, K, D))
+    B <- array(0, dim = c(K, D))
     # cause counts(particle*state)
-    Nk <- matrix(0, M, K)
+    Nk <- matrix(0, K, 1)
     # cause assignments (trial*state，value of first row is 1)
     results$post <- cbind(matrix(1, T, 1), matrix(0, T, K - 1))
     # US predictions(trials)
     results$V <- matrix(0, T, 1)
     # number of particles
-    z <- matrix(1, M, 1)
+    z <- 1
 
     # loop over trials
     for (t in 1:T) {
-        # calculate likelihood Set Mkd in stimulus on (particles*state*stim)
-        Mkd <- N
-        # if simlus is not presented, insert Mkd in simulus off
-        Mkd[, , X[t, ] == 0] <- B[, , X[t, ] == 0]
-        # calculate likelihood using supple equation 6
-        numerator_lik <- Mkd + a
-        denominator_lik <- Nk + a + b
         lik <- N
+        # if simlus is not presented, insert Mkd in simulus off
+        lik[ , X[t, ] == 0] <- B[ , X[t, ] == 0]
+        # calculate likelihood using supple equation 6
+        numerator_lik <- lik + a
+        denominator_lik <- Nk + a + b
         for (d in 1:D) {
-            lik[, , d] <- numerator_lik[, , d]/denominator_lik
+            lik[, d] <- numerator_lik[, d]/denominator_lik
         }
         # only update posterior if concentration parameter is non-zero
         if (opts$c_alpha > 0) {
             # calculate CRP prior
             prior <- Nk
-            for (m in 1:M) {
-                # add stickiness(if stickiness is higher than 0, number of state leadns 1)
-                prior[m, z[m]] <- prior[m, z[m]] + opts$stickiness
-                # probability of a new latent cause(Insert alpha in non active state)
-                prior[m, which(prior[m, ] == 0)[1]] <- opts$c_alpha
-            }
+            # add stickiness(if stickiness is higher than 0, number of state leadns 1)
+            prior[z] <- prior[z] + opts$stickiness
+            # probability of a new latent cause(Insert alpha in non active state)
+            prior[which(prior == 0)[1]] <- opts$c_alpha
             # posterior conditional on CS only element-wise product of prior and likelihood of CS
             # using supple 2nd term of equation 11
             num_add_cs <- D - 2  #if multiple CS are used, additional number of CS(use two CS, num_add_cs is 1)
             if (num_add_cs == 0) {
-                prod_like_cs <- lik[, , 2]
+                prod_like_cs <- lik[, 2]
             } else {
-                prod_like_cs <- lik[, , 2]
+                prod_like_cs <- lik[, 2]
                 for (d in 1:num_add_cs) {
-                    prod_like_cs <- prod_like_cs * lik[, , 2 + d]
+                    prod_like_cs <- prod_like_cs * lik[, 2 + d]
                 }
             }
             post <- prior * drop(prod_like_cs)
@@ -108,34 +102,25 @@ infer_lcm <- function(X, opts) {
 
             # posterior conditional on CS and US element-wise product of posterior of CS and
             # likelihood of US using supple 1st term of equation 11
-            post <- post * drop(lik[, , 1])
+            post <- post * drop(lik[, 1])
             # posterior of US is devided by row sum of posteriro of US（probability of US）
             post <- post/rowSums(post)
-            # marginalize over particles
-            post <- colMeans(post)
         }
         # output of results
         results$post[t, ] = post
         # posterior predictive mean for US likelihoof of US
-        pUS = drop(N[, , 1] + a)/(Nk + a + b)
+        pUS = (N[, 1] + a) / (Nk + a + b)
         # product of posteriro of CS and likelihood of US is devided by number of particles
-        results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS)/M
+        results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS)
 
         # sample new particles
         x1 <- X[t, ] == 1
         x0 <- X[t, ] == 0
-        if (M == 1) {
-            # maximum a posteriori
-            z = which.max(post)
-        } else {
-            # multinomial sample
-            z <- histc(runif(M, 0, 1), c(0, cumsum(post)))$bin
-        }
-        for (m in 1:M) {
-            Nk[m, z[m]] <- Nk[m, z[m]] + 1
-            N[m, z[m], x1] <- N[m, z[m], x1] + 1
-            B[m, z[m], x0] <- B[m, z[m], x0] + 1
-        }
+        z = which.max(post)
+
+        Nk[z] <- Nk[m, z[m]] + 1
+        N[z, x1] <- N[z, x1] + 1
+        B[z, x0] <- B[z, x0] + 1
     }
     # remove unused state
     # results$post <- results$post[, colMeans(results$post) != 0]
