@@ -1,7 +1,6 @@
-#' Latent cause model using particle filtering or local maximum a posteriori inference
+#' Latent cause model using local maximum a posteriori inference
 #'
-#' \code{infer_lcm} conduct Particle filtering or local maximum a posteriori inference
-#' for latent cause model of associative learning
+#' \code{infer_lcm} conduct local maximum a posteriori inference for latent cause model of associative learning
 #'
 #' @importFrom pracma histc
 #'
@@ -63,22 +62,21 @@ infer_lcm <- function(X, opts) {
     # initialization
     post <- matrix(0, 1, K)
     post[1] <- 1
-    # posterior probability of state(M=number of particles, K=number of state)
+    # posterior probability of state(K=number of state)
     post0 <- matrix(0, 1, K)
     post0[, 1] <- 1
     T <- nrow(X)
     D <- ncol(X)
-    # feature-cause co-occurence counts(particle*state*stim) stimuli On
+    # feature-cause co-occurence counts(state*stim) stimuli On
     N <- array(0, dim = c(K, D))
-    # feature-cause co-occurence counts(particle*state*stim) stimuli off
+    # feature-cause co-occurence counts(state*stim) stimuli off
     B <- array(0, dim = c(K, D))
-    # cause counts(particle*state)
+    # cause counts(state)
     Nk <- matrix(0, K, 1)
     # cause assignments (trial*state，value of first row is 1)
     results$post <- cbind(matrix(1, T, 1), matrix(0, T, K - 1))
     # US predictions(trials)
     results$V <- matrix(0, T, 1)
-    # number of particles
     z <- 1
 
     # loop over trials
@@ -125,15 +123,14 @@ infer_lcm <- function(X, opts) {
         results$post[t, ] = post
         # posterior predictive mean for US likelihoof of US
         pUS = (N[, 1] + a) / (Nk + a + b)
-        # product of posteriro of CS and likelihood of US is devided by number of particles
+        # product of posteriro of CS and likelihood of US
         results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS)
 
-        # sample new particles
         x1 <- X[t, ] == 1
         x0 <- X[t, ] == 0
         z = which.max(post)
 
-        Nk[z] <- Nk[m, z[m]] + 1
+        Nk[z] <- Nk[z] + 1
         N[z, x1] <- N[z, x1] + 1
         B[z, x0] <- B[z, x0] + 1
     }

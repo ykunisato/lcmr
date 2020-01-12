@@ -56,11 +56,11 @@ Context <- c(1,1,1,1,1,1,1,1,1,1,  0,0,0,0,0,0,0,0,0,0, 1,1,1,1,1,1,1,1,1,1)
 X <- cbind(US, CS, Context)
 ```
 
-You can simulate the conditioned response using infer_lcm(). I simulate the conditioned response setting the alpha = 0.4 and the number of particles = 1000. The alpha is the concentrate parameter of the Chinese Restaurant Process.
+You can simulate the conditioned response using infer_lcm(). I simulate the conditioned response setting the alpha = 0.4 . The alpha is the concentrate parameter of the Chinese Restaurant Process.
 
 ```{r message=FALSE, warning=FALSE}
 library(lcmr)
-sim_res <- infer_lcm(X = X, opts = list(c_alpha = 0.4, M = 1000))
+sim_res <- infer_lcm(X = X, opts = list(c_alpha = 0.4))
 ```
 
 You can the plot of change of conditioned response through the trials using the following codes.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/infer_lcm.R
 \name{infer_lcm}
 \alias{infer_lcm}
-\title{Latent cause model using particle filtering or local maximum a posteriori inference}
+\title{Latent cause model using local maximum a posteriori inference}
 \usage{
 infer_lcm(X, opts)
 }
@@ -35,8 +35,7 @@ the probability of latent cause k being active on trial t, after observing the a
 K (the number of latent causes) is determined adaptively by the model.
 }
 \description{
-\code{infer_lcm} conduct Particle filtering or local maximum a posteriori inference
-for latent cause model of associative learning
+\code{infer_lcm} conduct local maximum a posteriori inference for latent cause model of associative learning
 }
 \examples{
 # results <- infer_lcm(X,opts)
