@@ -60,7 +60,7 @@ You can simulate the conditioned response using infer_lcm(). I simulate the cond
 
 ```{r message=FALSE, warning=FALSE}
 library(lcmr)
-sim_res <- infer_lcm(X = X, opts = list(c_alpha = 0.4))
+sim_res <- infer_lcm(X = X, opts = list(c_alpha = 1))
 ```
 
 You can the plot of change of conditioned response through the trials using the following codes.

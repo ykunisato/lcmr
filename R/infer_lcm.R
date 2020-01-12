@@ -111,13 +111,13 @@ infer_lcm <- function(X, opts) {
             }
             post <- prior * drop(prod_like_cs)
             # divide posterior rowsum of posterior(is mean prob of CS)
-            post0 <- post/rowSums(post)
+            post0 <- post/colSums(post)
 
             # posterior conditional on CS and US element-wise product of posterior of CS and
             # likelihood of US using supple 1st term of equation 11
             post <- post * drop(lik[, 1])
             # posterior of US is devided by row sum of posteriro of US（probability of US）
-            post <- post/rowSums(post)
+            post <- post/colSums(post)
         }
         # output of results
         results$post[t, ] = post
