@@ -176,16 +176,12 @@ You can estimate parameter alpha using fit_lcm(data, model, opts, parameter_rang
 
 - parameter_range:  range of parameter(a_L, a_U, e_L, e_U)
 
-- parallel:  0 = single, 1 = parallel (parallel processing is not fast to compute at this time)
-
 - stimation_method:  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)
 
 ```{r}
 results <- fit_lcm(data, 
                    model = 1, 
-                   opts = list(M = 1000), 
                    parameter_range = list(a_L = 0, a_U = 15),
-                   parallel = 0, 
                    estimation_method = 0)
 ```
 

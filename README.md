@@ -56,13 +56,12 @@ X <- cbind(US, CS, Context)
 ```
 
 You can simulate the conditioned response using infer\_lcm(). I simulate
-the conditioned response setting the alpha = 0.4 and the number of
-particles = 1000. The alpha is the concentrate parameter of the Chinese
-Restaurant Process.
+the conditioned response setting the alpha = 0.4 . The alpha is the
+concentrate parameter of the Chinese Restaurant Process.
 
 ``` r
 library(lcmr)
-sim_res <- infer_lcm(X = X, opts = list(c_alpha = 0.4, M = 1000))
+sim_res <- infer_lcm(X = X, opts = list(c_alpha = 1))
 ```
 
 You can the plot of change of conditioned response through the trials
@@ -205,9 +204,6 @@ following argument for model fitting:
 
   - parameter\_range: range of parameter(a\_L, a\_U, e\_L, e\_U)
 
-  - parallel: 0 = single, 1 = parallel (parallel processing is not fast
-    to compute at this time)
-
   - stimation\_method: 0 = optim or optimize(lcm), 1 = post mean(only
     latent cause model)
 
@@ -216,9 +212,7 @@ following argument for model fitting:
 ``` r
 results <- fit_lcm(data, 
                    model = 1, 
-                   opts = list(M = 1000), 
                    parameter_range = list(a_L = 0, a_U = 15),
-                   parallel = 0, 
                    estimation_method = 0)
 ```
 
