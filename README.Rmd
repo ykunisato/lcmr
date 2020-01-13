@@ -164,7 +164,7 @@ number_of_perticiapnts <- 100
 participants_alpha <- runif(number_of_perticiapnts, 0, 10)
 data <- NULL
 for (i in 1:number_of_perticiapnts) {
-  sim_data <- infer_lcm(X, opts = list(c_alpha = participants_alpha[i], M = 1000))
+  sim_data <- infer_lcm(X, opts = list(c_alpha = participants_alpha[i]))
   sim_df <- data.frame(ID = rep(i,length(US)), CR = sim_data$V, X)
   data <- rbind(data,sim_df)
 }
