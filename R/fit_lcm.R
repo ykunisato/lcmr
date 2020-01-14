@@ -7,8 +7,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom tidyr nest
 #' @importFrom tidyr unnest_wider
-#' @importFrom furrr future_map
-#' @importFrom future plan
+#' @importFrom purrr map
 #' @importFrom pracma linspace
 #'
 #' @param data long format data containing the following variables
@@ -24,7 +23,56 @@
 #'
 #'        If you want to use LCM-RW, you have to add time variable(stimulus onset, unit is sec) before US.
 #' @param model 1 = latent cause model, 2 = latent cause modulated RW model
-#' @param opts (optional) structure defining ASL options
+#' @param opts (optional)options used in inference
+#'
+#'     <For LCM>
+#'
+#'     a hyperparameter of beta prior(default = 1)
+#'
+#'     b hyperparameter of beta prior(default = 1)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+#'
+#'     stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+#'
+#'     K maximum number of latent causes(default = 10)
+#'
+#'     <For LCM-RW>
+#'
+#'     a hyperparameter of beta prior(default = 1)
+#'
+#'     b hyperparameter of beta prior(default = 1)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+#'
+#'     stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+#'
+#'     K maximum number of latent causes(default = 10)
+#'
+#'     c_alpha concentration parameter for Chinese restaurant process prior(default = 0.1)
+#'
+#'     g temporal scaling parameter(default = 1)
+#'
+#'     psi [N x 1]binary vector specifying when protein synthesis inhibitor is injected(default = 0)
+#'
+#'     eta learning rate(default = 0.2)
+#'
+#'     maxIter maximum number of iterations between each trial(default = 3)
+#'
+#'     w0 initial weight value(default = 0)
+#'
+#'     sr US variance(default = 0.4)
+#'
+#'     sx stimulus variance(default = 1)
+#'
+#'     theta response threshold(default = 0.3)
+#'
+#'     lambda response gain(default = 0.005)
+#'
+#'     K maximum number of latent causes(default = 15)
+#'
+#'     nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst = 0.(default = 0)
+#'
 #' @param parameter_range (optional)  range of parameter(a_L, a_U, e_L, e_U)
 #' @param estimation_method (optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)
 #'
@@ -70,37 +118,28 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
     # fitting
     if(model == 1){
         if(estimation_method==0){
-            # set parallel computing
-            plan("future::multisession")
-            # fitting
             fit <- data %>%
                 group_by(ID) %>%
                 nest() %>%
-                mutate(fit = future_map(data, ~optimize(compute_negative_loglike,
+                mutate(fit = map(data, ~optimize(compute_negative_loglike,
                                                         interval = c(parameter_range$a_L, parameter_range$a_U),
                                                         data = ., model = model, opts = opts))) %>%
                 unnest_wider(fit) %>%
                 rename(alpha=minimum,nll=objective)
         }else if(estimation_method==1){
             alpha <- linspace(0, 10, 50)
-            # set parallel computing
-            plan("future::multisession")
-            # fitting
             fit <- data %>%
                 group_by(ID) %>%
                 nest() %>%
-                mutate(fit = future_map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
+                mutate(fit = map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
                 unnest_wider(fit) %>%
                 rename(alpha = post_mean_alpha)
         }
     }else if(model == 2){
-        # set parallel computing
-        plan("future::multisession")
-        # fitting
         fit  <- data %>%
             group_by(ID) %>%
             nest() %>%
-            mutate(fit = future_map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
+            mutate(fit = map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
             unnest_wider(fit)
     }
     # extract matrix of latent cause posterior and V & CR predicted

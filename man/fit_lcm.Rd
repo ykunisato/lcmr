@@ -21,7 +21,54 @@ fit_lcm(data, model, opts, parameter_range, estimation_method)
 
 \item{model}{1 = latent cause model, 2 = latent cause modulated RW model}
 
-\item{opts}{(optional) structure defining ASL options}
+\item{opts}{(optional)options used in inference\preformatted{<For LCM>
+
+a hyperparameter of beta prior(default = 1)
+
+b hyperparameter of beta prior(default = 1)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+
+stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+
+K maximum number of latent causes(default = 10)
+
+<For LCM-RW>
+
+a hyperparameter of beta prior(default = 1)
+
+b hyperparameter of beta prior(default = 1)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 1)
+
+stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
+
+K maximum number of latent causes(default = 10)
+
+c_alpha concentration parameter for Chinese restaurant process prior(default = 0.1)
+
+g temporal scaling parameter(default = 1)
+
+psi [N x 1]binary vector specifying when protein synthesis inhibitor is injected(default = 0)
+
+eta learning rate(default = 0.2)
+
+maxIter maximum number of iterations between each trial(default = 3)
+
+w0 initial weight value(default = 0)
+
+sr US variance(default = 0.4)
+
+sx stimulus variance(default = 1)
+
+theta response threshold(default = 0.3)
+
+lambda response gain(default = 0.005)
+
+K maximum number of latent causes(default = 15)
+
+nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst = 0.(default = 0)
+}}
 
 \item{parameter_range}{(optional)  range of parameter(a_L, a_U, e_L, e_U)}
 
