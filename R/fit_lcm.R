@@ -243,7 +243,7 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
     smallest_nll <- Inf
     param <- NULL
     cat("start estimation using optim... \n")
-    for (i in 1:100) {
+    for (i in 1:200) {
         #compute_negative_loglike(param, data, model, opts)
         init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
                         runif(1,parameter_range$e_L,parameter_range$e_U))
@@ -263,19 +263,21 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
         }
         }, error = function(e) {cat(i," Error in estimation using optim\n")})
 
-        if(i==20 && length(param)!=0){
-            break
-        }else if(i==40 && length(param)!=0){
-            break
-        }else if(i==60 && length(param)!=0){
-            break
-        }else if(i==70 && length(param)!=0){
+        if(i==40 && length(param)!=0){
             break
         }else if(i==80 && length(param)!=0){
             break
-        }else if(i==90 && length(param)!=0){
-            break
         }else if(i==100 && length(param)!=0){
+            break
+        }else if(i==120 && length(param)!=0){
+            break
+        }else if(i==140 && length(param)!=0){
+            break
+        }else if(i==160 && length(param)!=0){
+            break
+        }else if(i==180 && length(param)!=0){
+            break
+        }else if(i==200 && length(param)!=0){
             break
         }
     }
