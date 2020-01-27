@@ -72,7 +72,7 @@ nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst 
 
 \item{parameter_range}{(optional)  range of parameter(a_L, a_U, e_L, e_U)}
 
-\item{estimation_method}{(optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)}
+\item{estimation_method}{(optional)  0 = optim, 1 = post mean(only latent cause model), 2 = optimize(lcm)}
 }
 \value{
 return the fit, parameters and plc_vcr.

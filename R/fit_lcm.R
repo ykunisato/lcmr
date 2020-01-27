@@ -74,7 +74,7 @@
 #'     nst If you don't want to use  a nonlinear sigmoidal transformation, you set nst = 0.(default = 0)
 #'
 #' @param parameter_range (optional)  range of parameter(a_L, a_U, e_L, e_U)
-#' @param estimation_method (optional)  0 = optim or optimize(lcm), 1 = post mean(only latent cause model)
+#' @param estimation_method (optional)  0 = optim, 1 = post mean(only latent cause model), 2 = optimize(lcm)
 #'
 #' @return return the fit, parameters and plc_vcr.
 #' fit is fitting results. parameters is parameters estmated including post_mean_alpha(posterior mean alpha) and
@@ -118,14 +118,11 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
     # fitting
     if(model == 1){
         if(estimation_method==0){
-            fit <- data %>%
+            fit  <- data %>%
                 group_by(ID) %>%
                 nest() %>%
-                mutate(fit = map(data, ~optimize(compute_negative_loglike,
-                                                        interval = c(parameter_range$a_L, parameter_range$a_U),
-                                                        data = ., model = model, opts = opts))) %>%
-                unnest_wider(fit) %>%
-                rename(alpha=minimum,nll=objective)
+                mutate(fit = map(data, ~estimate_by_optim(data = ., model, opts, parameter_range))) %>%
+                unnest_wider(fit)
         }else if(estimation_method==1){
             alpha <- linspace(parameter_range$a_L, parameter_range$a_U, 100)
             fit <- data %>%
@@ -134,6 +131,15 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
                 mutate(fit = map(data, ~estimate_by_post_mean(data = ., model, opts, alpha))) %>%
                 unnest_wider(fit) %>%
                 rename(alpha = post_mean_alpha)
+        }else if(estimation_method==2){
+            fit <- data %>%
+                group_by(ID) %>%
+                nest() %>%
+                mutate(fit = map(data, ~optimize(compute_negative_loglike,
+                                                 interval = c(parameter_range$a_L, parameter_range$a_U),
+                                                 data = ., model = model, opts = opts))) %>%
+                unnest_wider(fit) %>%
+                rename(alpha=minimum,nll=objective)
         }
     }else if(model == 2){
         fit  <- data %>%
@@ -194,7 +200,6 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
 
 
 
-
 #' Estimate alpha of LCM by post mean
 #'
 #' \code{estimate_by_post_mean} is function to estimate alpha and logBF
@@ -245,22 +250,35 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
     cat("start estimation using optim... \n")
     for (i in 1:200) {
         #compute_negative_loglike(param, data, model, opts)
-        init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
-                        runif(1,parameter_range$e_L,parameter_range$e_U))
-        tryCatch({
-        results <- optim(init_param,
-                         compute_negative_loglike,
-                         data = data, model = model, opts = opts,
-                         method = "L-BFGS-B",
-                         lower = c(parameter_range$a_L,parameter_range$e_L),
-                         upper = c(parameter_range$a_U,parameter_range$e_U))
-
-        cat(i," ","negative log likelihood: ",results$value)
-        cat("  parameter: ",results$par,"\n")
-        if(results$value < smallest_nll){
-            smallest_nll <- results$value
-            param <- results$par
+        if(model==1){
+            init_param <- runif(1,parameter_range$a_L,parameter_range$a_U)
+        }else if(model==2){
+            init_param <- c(runif(1,parameter_range$a_L,parameter_range$a_U),
+                             runif(1,parameter_range$e_L,parameter_range$e_U))
         }
+
+        tryCatch({
+            if(model==1){
+                results <- optim(init_param,
+                                 compute_negative_loglike,
+                                 data = data, model = model, opts = opts,
+                                 method = "L-BFGS-B",
+                                 lower = parameter_range$a_L,
+                                 upper = parameter_range$a_U)
+            }else if(model==2){
+                results <- optim(init_param,
+                                 compute_negative_loglike,
+                                 data = data, model = model, opts = opts,
+                                 method = "L-BFGS-B",
+                                 lower = c(parameter_range$a_L,parameter_range$e_L),
+                                 upper = c(parameter_range$a_U,parameter_range$e_U))
+            }
+            cat(i," ","negative log likelihood: ",results$value)
+            cat("  parameter: ",results$par,"\n")
+            if(results$value < smallest_nll){
+                smallest_nll <- results$value
+                param <- results$par
+            }
         }, error = function(e) {cat(i," Error in estimation using optim\n")})
 
         if(i==40 && length(param)!=0){
