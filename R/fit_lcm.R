@@ -127,7 +127,7 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
                 unnest_wider(fit) %>%
                 rename(alpha=minimum,nll=objective)
         }else if(estimation_method==1){
-            alpha <- linspace(0, 10, 50)
+            alpha <- linspace(parameter_range$a_L, parameter_range$a_U, 100)
             fit <- data %>%
                 group_by(ID) %>%
                 nest() %>%
