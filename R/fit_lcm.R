@@ -281,22 +281,42 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
             }
         }, error = function(e) {cat(i," Error in estimation using optim\n")})
 
-        if(i==40 && length(param)!=0){
-            break
-        }else if(i==80 && length(param)!=0){
-            break
-        }else if(i==100 && length(param)!=0){
-            break
-        }else if(i==120 && length(param)!=0){
-            break
-        }else if(i==140 && length(param)!=0){
-            break
-        }else if(i==160 && length(param)!=0){
-            break
-        }else if(i==180 && length(param)!=0){
-            break
-        }else if(i==200 && length(param)!=0){
-            break
+        if(model==1){
+            if(i==10 && length(param)!=0){
+                break
+            }else if(i==50 && length(param)!=0){
+                break
+            }else if(i==75 && length(param)!=0){
+                break
+            }else if(i==100 && length(param)!=0){
+                break
+            }else if(i==125 && length(param)!=0){
+                break
+            }else if(i==150 && length(param)!=0){
+                break
+            }else if(i==175 && length(param)!=0){
+                break
+            }else if(i==200 && length(param)!=0){
+                break
+            }
+        }else{
+            if(i==40 && length(param)!=0){
+                break
+            }else if(i==80 && length(param)!=0){
+                break
+            }else if(i==100 && length(param)!=0){
+                break
+            }else if(i==120 && length(param)!=0){
+                break
+            }else if(i==140 && length(param)!=0){
+                break
+            }else if(i==160 && length(param)!=0){
+                break
+            }else if(i==180 && length(param)!=0){
+                break
+            }else if(i==200 && length(param)!=0){
+                break
+            }
         }
     }
 
