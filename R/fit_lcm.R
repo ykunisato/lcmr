@@ -117,6 +117,7 @@ fit_lcm <- function(data, model, opts, parameter_range, estimation_method){
     }
     # fitting
     if(model == 1){
+
         if(estimation_method==0){
             fit  <- data %>%
                 group_by(ID) %>%
@@ -334,5 +335,66 @@ estimate_by_optim <- function(data, model, opts, parameter_range) {
     }else if(model==2){
         return(list(alpha = param[1], eta = param[2], nll = smallest_nll))
     }
+}
 
+#' Set options
+#'
+#' \code{set_opts} set options
+#' @param model 1 = latent cause model, 2 = latent cause modulated RW model
+#' @param opts  options used in inference
+#' @return opts
+#' @export
+#' @examples
+#'
+#' # opts = set_opts(1, opts = list(M = 1000, c_alpha = 1))
+set_opts <- function(model, opts){
+    if(model == 1 ){
+        # default options
+        def_opts <- list()
+        def_opts$a <- 1
+        def_opts$b <- 1
+        def_opts$c_alpha <- 1
+        def_opts$stickiness <- 0
+        def_opts$K <- 10
+        def_opts$M <- 100
+        # set options
+
+        if (nargs() < 2) {
+            opts = def_opts
+        } else {
+            F <- names(def_opts)
+            for (i in 1:length(F)) {
+                if (eval(parse(text = paste0("length(opts$", F[i], ")==0")))) {
+                    eval(parse(text = paste0("opts$", F[i], "=def_opts$", F[i])))
+                }
+            }
+        }
+    }else if(model == 2){
+        # default options
+        def_opts <- list()
+        def_opts$c_alpha <- 0.1
+        def_opts$g <- 1
+        def_opts$psi <- 0
+        def_opts$eta <- 0.2
+        def_opts$maxIter <- 3
+        def_opts$w0 <- 0
+        def_opts$sr <- 0.4
+        def_opts$sx <- 1
+        def_opts$theta <- 0.03
+        def_opts$lambda <- 0.005
+        def_opts$K <- 15
+        def_opts$nst <- 0
+        # set options
+        if (nargs() < 2) {
+            opts = def_opts
+        } else {
+            F <- names(def_opts)
+            for (i in 1:length(F)) {
+                if (eval(parse(text = paste0("length(opts$", F[i], ")==0")))) {
+                    eval(parse(text = paste0("opts$", F[i], "=def_opts$", F[i])))
+                }
+            }
+        }
+    }
+    return(opts)
 }

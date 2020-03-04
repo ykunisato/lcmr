@@ -2,7 +2,7 @@
 % Please edit documentation in R/infer_lcm.R
 \name{infer_lcm}
 \alias{infer_lcm}
-\title{Latent cause model using local maximum a posteriori inference}
+\title{Latent cause model using particle filtering and local maximum a posteriori inference}
 \usage{
 infer_lcm(X, opts)
 }
@@ -23,6 +23,8 @@ c_alpha concentration parameter for Chinese restaurant process prior(default = 1
 stickiness stickiness parameer for Chinese restaurant process prior(default = 0)
 
 K maximum number of latent causes(default = 10)
+
+M number of particles(if set M = 1, infer_lcm use MAP inference)
 }}
 }
 \value{

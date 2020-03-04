@@ -3,6 +3,7 @@
 export(fit_lcm)
 export(infer_lcm)
 export(infer_lcm_rw)
+export(set_opts)
 importFrom(dplyr,group_by)
 importFrom(dplyr,mutate)
 importFrom(magrittr,"%>%")

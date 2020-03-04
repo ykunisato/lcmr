@@ -1,8 +1,6 @@
-#' Latent cause model using local maximum a posteriori inference
+#' Latent cause model using particle filtering and local maximum a posteriori inference
 #'
 #' \code{infer_lcm} conduct local maximum a posteriori inference for latent cause model of associative learning
-#'
-#' @importFrom pracma histc
 #'
 #' @param X matrix of stimulus inputs consisting of the number of trial rows and
 #' the number of stimulus features columns. The first feature (column 1) is the US,
@@ -24,6 +22,8 @@
 #'
 #'     K maximum number of latent causes(default = 10)
 #'
+#'     M number of particles(if set M = 1, infer_lcm use MAP inference)
+#'
 #' @return opts: options used in inference
 #' @return V: US prediction each trial
 #' @return post: matrix of latent cause posterior consisting of the number of trial rows and
@@ -34,113 +34,110 @@
 #' # results <- infer_lcm(X,opts)
 
 infer_lcm <- function(X, opts) {
-    # set default options
-    def_opts <- list()
-    def_opts$a <- 1
-    def_opts$b <- 1
-    def_opts$c_alpha <- 1
-    def_opts$stickiness <- 0
-    def_opts$K <- 10
-    # set parameters
     results <- list()
-    if (nargs() < 2) {
-        opts = def_opts
-    } else {
-        F <- names(def_opts)
-        for (i in 1:length(F)) {
-            if (eval(parse(text = paste0("length(opts$", F[i], ")==0")))) {
-                eval(parse(text = paste0("opts$", F[i], "=def_opts$", F[i])))
-            }
-        }
-    }
-
     a <- opts$a
     b <- opts$b
     K <- opts$K
+    M <- opts$M
     results$opts <- opts
 
     # initialization
-    post <- matrix(0, 1, K)
-    post[1] <- 1
+    post <- matrix(0, M, K)
+    post[, 1] <- 1
     # posterior probability of state(K=number of state)
-    post0 <- matrix(0, 1, K)
+    post0 <- matrix(0, M, K)
     post0[, 1] <- 1
     T <- nrow(X)
     D <- ncol(X)
     # feature-cause co-occurence counts(state*stim) stimuli On
-    N <- array(0, dim = c(K, D))
+    N <- array(0, dim = c(M, K, D))
     # feature-cause co-occurence counts(state*stim) stimuli off
-    B <- array(0, dim = c(K, D))
+    B <- array(0, dim = c(M, K, D))
     # cause counts(state)
-    Nk <- matrix(0, K, 1)
+    Nk <- matrix(0, M, K)
     # cause assignments (trial*state，value of first row is 1)
     results$post <- cbind(matrix(1, T, 1), matrix(0, T, K - 1))
     # US predictions(trials)
     results$V <- matrix(0, T, 1)
-    z <- 1
+    z <- matrix(1, M, 1)
 
     # loop over trials
     for (t in 1:T) {
         lik <- N
         # if simlus is not presented, insert Mkd in simulus off
-        lik[ , X[t, ] == 0] <- B[ , X[t, ] == 0]
+        lik[ , , X[t, ] == 0] <- B[ , , X[t, ] == 0]
         # calculate likelihood using supple equation 6
         numerator_lik <- lik + a
         denominator_lik <- Nk + a + b
         for (d in 1:D) {
-            lik[, d] <- numerator_lik[, d]/denominator_lik
+            lik[, , d] <- numerator_lik[ , , d]/denominator_lik
         }
         # only update posterior if concentration parameter is non-zero
         if (opts$c_alpha > 0) {
             # calculate CRP prior
             prior <- Nk
-            # add stickiness(if stickiness is higher than 0, number of state leadns 1)
-            prior[z] <- prior[z] + opts$stickiness
-            # probability of a new latent cause(Insert alpha in non active state)
-            prior[which(prior == 0)[1]] <- opts$c_alpha
+            for (m in 1:M) {
+                # add stickiness(if stickiness is higher than 0, number of state leadns 1)
+                prior[m,z[m]] <- prior[m, z[m]] + opts$stickiness
+                # probability of a new latent cause(Insert alpha in non active state)
+                prior[m, which(prior[m,] == 0)[1]] <- opts$c_alpha
+            }
+            prior = prior / rowSums(prior)
+
             # posterior conditional on CS only element-wise product of prior and likelihood of CS
             # using supple 2nd term of equation 11
             num_add_cs <- D - 2  #if multiple CS are used, additional number of CS(use two CS, num_add_cs is 1)
             if (num_add_cs == 0) {
-                prod_like_cs <- lik[, 2]
+                prod_like_cs <- lik[, , 2]
             } else {
-                prod_like_cs <- lik[, 2]
+                prod_like_cs <- lik[, , 2]
                 for (d in 1:num_add_cs) {
-                    prod_like_cs <- prod_like_cs * lik[, 2 + d]
+                    prod_like_cs <- prod_like_cs * lik[, , 2 + d]
                 }
             }
             post <- prior * drop(prod_like_cs)
             # divide posterior rowsum of posterior(is mean prob of CS)
-            post0 <- post/colSums(post)
+            post0 <- post/rowSums(post)
 
             # posterior conditional on CS and US element-wise product of posterior of CS and
             # likelihood of US using supple 1st term of equation 11
-            post <- post * drop(lik[, 1])
+            post <- post * drop(lik[ , , 1])
             # posterior of US is devided by row sum of posteriro of US（probability of US）
-            post <- post/colSums(post)
+            post <- post/sum(post)
         }
         # output of results
-        results$post[t, ] = post
+        results$post[t, ] = colMeans(post / rowSums(post))
         # posterior predictive mean for US likelihoof of US
-        pUS = (N[, 1] + a) / (Nk + a + b)
+        pUS = (N[ , , 1] + a) / (Nk + a + b)
         # product of posteriro of CS and likelihood of US
-        results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS)
+        results$V[t, 1] = t(as.vector(post0)) %*% as.vector(pUS) / M
 
         x1 <- X[t, ] == 1
         x0 <- X[t, ] == 0
-        z = which.max(post)
 
-        Nk[z] <- Nk[z] + 1
-        N[z, x1] <- N[z, x1] + 1
-        B[z, x0] <- B[z, x0] + 1
+        if(M == 1){
+            z = which.max(post)
+            Nk[1,z] <- Nk[1, z] + 1
+            N[1, z, x1] <- N[1, z, x1] + 1
+            B[1, z, x0] <- B[1, z, x0] + 1
+        }else{
+            Nk_old <- Nk
+            N_old <- N
+            B_old <- B
+            for (m in 1:M) {
+                row_p <- min(which(runif(1) < cumsum(rowSums(post))))
+                Nk[m, ] <- Nk_old[row_p, ]
+                N[m, , ] <- N_old[row_p, , ]
+                B[m, , ] <- B_old[row_p, , ]
+                col_p <- min(which(runif(1) < cumsum(post[row_p, ]/sum(post[row_p,]))))
+                Nk[m, col_p] = Nk[m, col_p] + 1
+                N[m, col_p, x1] = N[m, col_p, x1] + 1
+                B[m, col_p, x0] = B[m, col_p, x0] + 1
+            }
+        }
     }
-    # remove unused state
-    # results$post <- results$post[, colMeans(results$post) != 0]
     return(list(opts = opts, V = results$V, post = results$post))
 }
-
-
-
 
 
 #' Latent cause modulated Rescorla-Wagner model
@@ -203,35 +200,6 @@ infer_lcm <- function(X, opts) {
 #' # results <- infer_lcm_rw(X, opts)
 #'
 infer_lcm_rw <- function(X, opts){
-    # set options
-    def_opts <- list()
-    def_opts$c_alpha <- 0.1
-    def_opts$g <- 1
-    def_opts$psi <- 0
-    def_opts$eta <- 0.2
-    def_opts$maxIter <- 3
-    def_opts$w0 <- 0
-    def_opts$sr <- 0.4
-    def_opts$sx <- 1
-    def_opts$theta <- 0.03
-    def_opts$lambda <- 0.005
-    def_opts$K <- 15
-    def_opts$nst <- 0
-
-    if (nargs() < 2) {
-        opts <- NULL
-    }
-    if (length(opts) == 0) {
-        opts = def_opts
-    } else {
-        F <- names(def_opts)
-        for (i in 1:length(F)) {
-            if (eval(parse(text = paste0("length(opts$", F[i], ")==0")))) {
-                eval(parse(text = paste0("opts$", F[i], "=def_opts$", F[i])))
-            }
-        }
-    }
-
     # Initialization
     zp_save <- NULL
     w_save <- NULL
