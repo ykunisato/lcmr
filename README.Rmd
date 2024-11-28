@@ -60,7 +60,12 @@ You can simulate the conditioned response using infer_lcm(). I simulate the cond
 
 ```{r message=FALSE, warning=FALSE}
 library(lcmr)
-sim_res <- infer_lcm(X = X, opts = list(c_alpha = 1))
+sim_res <- infer_lcm(X = X, opts = list(c_alpha = 0.4,
+                                        K=10,
+                                        M=100,
+                                        a = 1,
+                                        b = 1,
+                                        stickiness = 0))
 ```
 
 You can the plot of change of conditioned response through the trials using the following codes.
@@ -110,7 +115,25 @@ You can simulate the conditioned response using infer_lcm(). I simulate the cond
 
 ```{r message=FALSE, warning=FALSE}
 library(lcmr)
-sim_res <- infer_lcm_rw(X = X, opts = list(c_alpha = 0.45, eta = 0.2))
+
+
+sim_res <- infer_lcm_rw(X = X, opts = list(
+  a = 1,
+  b = 1,
+  c_alpha = 0.45,
+  stickiness = 0,
+  K = 10,
+  g = 1,
+  psi = 0,
+  eta = 0.2,
+  maxIter= 3,
+  w0 = 0,
+  sr = 0.4,
+  sx = 1,
+  theta = 0.3,
+  lambda = 0.005,
+  K = 15,
+  nst = 0))
 ```
 
 You can the plot of change of conditioned response through the trials using the following codes.
@@ -164,7 +187,12 @@ number_of_perticiapnts <- 100
 participants_alpha <- runif(number_of_perticiapnts, 0, 10)
 data <- NULL
 for (i in 1:number_of_perticiapnts) {
-  sim_data <- infer_lcm(X, opts = list(c_alpha = participants_alpha[i]))
+  sim_data <- infer_lcm(X, opts = list(c_alpha = participants_alpha[i],
+                                       K=10,
+                                       M=100,
+                                       a = 1,
+                                       b = 1,
+                                       stickiness = 0))
   sim_df <- data.frame(ID = rep(i,length(US)), CR = sim_data$V, X)
   data <- rbind(data,sim_df)
 }
@@ -181,6 +209,11 @@ You can estimate parameter alpha using fit_lcm(data, model, opts, parameter_rang
 ```{r}
 results <- fit_lcm(data, 
                    model = 1, 
+                   opts = list(K=10,
+                                       M=100,
+                                       a = 1,
+                                       b = 1,
+                                       stickiness = 0),
                    parameter_range = list(a_L = 0, a_U = 15),
                    estimation_method = 0)
 ```
